@@ -106,7 +106,7 @@ public class Tiger{
             if (sw.emailTaken(email)) {
                 System.out.println("Email taken");
                 System.out.println();
-                firstMenu();
+                firstScreen();
                 return;
             }
 		System.out.println("Enter password:");
@@ -375,8 +375,7 @@ public class Tiger{
 	}
 
 	private static void editCards() {
-		// TODO Auto-generated method stub
-		
+            
 	}
 
 	private static String editString() {
