@@ -114,7 +114,9 @@ public class UserService implements Service<User>{
 						
 			ResultSet usersRs = pstmt.executeQuery();
 			
-			usersRs.next();
+			if (!usersRs.next()) {
+                            return null;
+                        }
 			user = new User(
 					usersRs.getString(1),
 					usersRs.getString(2),

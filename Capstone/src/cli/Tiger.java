@@ -10,6 +10,7 @@ import domain.Menu;
 import domain.Order;
 import domain.Store;
 import domain.User;
+import java.sql.SQLException;
 import services.MenuServices;
 import services.OrderService;
 import services.StoreService;
@@ -25,17 +26,13 @@ public class Tiger{
 	
 	static Scanner sc;
 
-	public static void main(String[] args) {
-		try {
-		    Class.forName("oracle.jdbc.OracleDriver");
-                    con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "db_uSpring", "pass");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		sw  = new ServiceWrapper(con);
-		sc = new Scanner(System.in);
-		firstScreen();
-		sc.close();
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+                Class.forName("oracle.jdbc.OracleDriver");
+                con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "db_uSpring", "pass");
+                sw  = new ServiceWrapper(con);
+                sc = new Scanner(System.in);
+                firstScreen();
+                sc.close();
 	}
 	
 	public static void firstScreen(){
