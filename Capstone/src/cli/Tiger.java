@@ -103,6 +103,12 @@ public class Tiger{
 		System.out.println("\n*Register*");
 		System.out.println("Enter email:");
 	    String email = sc.next();
+            if (sw.emailTaken(email)) {
+                System.out.println("Email taken");
+                System.out.println();
+                firstMenu();
+                return;
+            }
 		System.out.println("Enter password:");
 	    String password = sc.next();
 		System.out.println("Enter password again:");

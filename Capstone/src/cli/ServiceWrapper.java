@@ -26,6 +26,12 @@ public class ServiceWrapper {
 		this.con = con;
 
 	}
+        
+        public boolean emailTaken(String email) {
+            UserService us = new UserService(con);
+            User candidate = us.getByEmail(email);
+            return email == null;
+        }
 
 	public User login(String email, String password){
 		
