@@ -1,5 +1,6 @@
 package cli;
 
+import static cli.Tiger.firstScreen;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -61,7 +62,14 @@ public class AdminAndManager {
 	    			break;
 	    		}
 	    	case 3:
-	    		optionsScreen("Delivery Method");
+	    		option = optionsScreen("Delivery Method");
+                        switch(option){
+                         //case 1:();
+                            
+                            
+                        }
+                            
+                        
 	    	case 4:
 	    		optionsScreen("Delivery Statuse");
 	    	case 5:
@@ -109,7 +117,8 @@ public class AdminAndManager {
 	    	case 11:
 	    		optionsScreen("User Statuse");
 	    	case 12:
-	    		adminScreen();
+                        firstScreen();
+                        
 	    	case 13:
 	    		System.exit(0);
 	    }
@@ -197,12 +206,15 @@ public class AdminAndManager {
 		int year = sc.nextInt();
 		System.out.println("Enter expiration month: ");
 		int month = sc.nextInt();
-		System.out.println("Enter expiration date: ");
+		
+                
+                System.out.println("Enter expiration date: ");
 		int day = sc.nextInt();
 		Date expiryDate= new Date(year, month, day);
 		System.out.println("Enter Security code: ");
 		String securityCode= sc.next();
-	    
+                
+                //stops working here
 		Card c = new Card(cardId, userId, cardNumber, expiryDate, securityCode);
 		
 		cs.update(c);
