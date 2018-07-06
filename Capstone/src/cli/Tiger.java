@@ -10,6 +10,16 @@ import domain.Menu;
 import domain.Order;
 import domain.Store;
 import domain.User;
+import static java.lang.ProcessBuilder.Redirect.from;
+import static java.lang.ProcessBuilder.Redirect.to;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import services.MenuServices;
 import services.OrderService;
 import services.StoreService;
@@ -131,6 +141,7 @@ public class Tiger{
 	    //, street, city, state, country, zip, status
 	    if(password.equals(passwordConfirm)){
 	    	System.out.println("Registered");
+                accountActivationMessage(first,last,email);
 	    	currentUser = sw.register(first, last, phone, email, password);
 			currentOrder = new Order();
 			currentOrder.setOrder_id(Double.toString(Math.random()* 10001));
@@ -425,4 +436,40 @@ public class Tiger{
 	    if(input==1) return true;
 	    return false;
 	}
+        
+        public static void accountActivationMessage(String firstName, String lastName, String email){
+            String to = email;
+            String from = "testmummybusiness@gmail.com";
+            
+            Properties prop = System.getProperties();
+            prop.put("mail.smtp.host","smtp.gmail.com");
+            prop.put("mailsmtp.socketFactory.port", "465");
+            prop.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            prop.put("mail.smtp.auth", "true");
+            prop.put("mail.smtp.port", "465");
+            
+            Session session = Session.getDefaultInstance(prop, 
+                    new javax.mail.Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication("testmummybusiness@gmail.com", "test123@");
+                        }
+                    });
+            try{
+                MimeMessage message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(from));
+                message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+                message.setSubject("Thank you for creating you account!");
+                message.setText("Hello Mr. " + firstName + " " + lastName + ", \n\n " +
+                        "First off I want to welcome you to the Mummy family. You can check out " + 
+                        "our specials and menu options on your homepage. We hope you enjoy our food " +
+                        "you leave with a food coma. So enjoy your access to our food. \n\n" + 
+                        "Thank you for creating your account, \n Mama Mummy");
+                
+                Transport.send(message);
+                System.out.println("Account creation message sent...");
+                
+            }catch(MessagingException me){
+                me.printStackTrace();
+            }
+        }
 }
