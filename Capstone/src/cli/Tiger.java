@@ -51,19 +51,28 @@ public class Tiger{
 		}
 		
 	    int input = sc.nextInt();
-	    switch(input){
-    		case 1:
-    			loginScreen();
-    		case 2:
-    			registerScreen();    	
-    		case 3:
-    			System.out.println("Goodbye");
-    			System.exit(0);
-    		case 4:
-    			AdminAndManager aam = new AdminAndManager(con);
-    			aam.adminScreen();
-	    }
-
+            boolean end = false;
+            
+                switch(input){
+                    case 1:
+                            loginScreen();
+                            
+                            break;
+                    case 2:
+                            registerScreen();
+                          
+                            break;
+                    case 3:
+                            System.out.println("Goodbye");
+                            
+                            break;
+                    case 4:
+                            AdminAndManager aam = new AdminAndManager(con);
+                            aam.adminScreen();
+                            
+                            break;
+                }
+            
 	}
 		
 	public static void loginScreen(){
@@ -160,16 +169,20 @@ public class Tiger{
 			count++;
 			System.out.println(count + ". " + option);
 		}
-	    int input = sc.nextInt();
-		if(input==1) menuScreen();
-		if(input==2) currentOrderScreen();    	
-		if(input==3) accountScreen();
-		if(input==4) storeDetailsScreen();   	
-		if(input==5) firstScreen();
-		if(input==6) {
-			System.out.println("Goodbye");
-    		System.exit(0);
-	    }
+                boolean end = false;
+                
+                while(end == false){
+                    int input = sc.nextInt();
+                    if(input==1) menuScreen();
+                    if(input==2) currentOrderScreen();    	
+                    if(input==3) accountScreen();
+                    if(input==4) storeDetailsScreen();   	
+                    if(input==5) firstScreen();
+                    if(input==6) {
+                            System.out.println("Goodbye");
+                            end = true;
+                    }
+                }
 	}
 	
 	public static void menuScreen(){
@@ -222,7 +235,19 @@ public class Tiger{
 	    }
 	    if(input==2) viewEditOrderItems(currentOrder);
 	    if(input==3) editOrder(currentOrder);
-	    if(input==4 && confirm()) sw.submitOrder(currentOrder);
+	    if(input==4 && confirm()) {
+                ArrayList<String> itemIds = currentOrder.getItem_ids();
+		ArrayList<Menu> items = sw.getMenuItems(itemIds);
+		if(items.isEmpty()){
+                    System.out.println("No items in cart!");
+                    currentOrderScreen();
+                }
+                else{
+                    sw.submitOrder(currentOrder);
+                    homeScreen();
+                }
+
+            }
 	    else if(input==5) homeScreen();
 	}
 	
@@ -311,6 +336,7 @@ public class Tiger{
 	   // }
 	    //OrderService os = new OrderService(con);
 	    //os.update(currentOrder);
+            homeScreen();
 	}
 	
 	public static void accountScreen(){
