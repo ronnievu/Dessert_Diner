@@ -1,5 +1,6 @@
 package cli;
 
+import domain.Card;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
@@ -10,7 +11,13 @@ import domain.Menu;
 import domain.Order;
 import domain.Store;
 import domain.User;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
+import services.CardService;
 import services.MenuServices;
 import services.OrderService;
 import services.StoreService;
@@ -51,14 +58,18 @@ public class Tiger{
 	    switch(input){
     		case 1:
     			loginScreen();
+                        break;
     		case 2:
-    			registerScreen();    	
+    			registerScreen();
+                        break;                        
     		case 3:
     			System.out.println("Goodbye");
     			System.exit(0);
+                        break;
     		case 4:
     			AdminAndManager aam = new AdminAndManager(con);
     			aam.adminScreen();
+                        break;
 	    }
 
 	}
@@ -360,7 +371,7 @@ public class Tiger{
     			currentUser.setPhone(newPhoneNumber);
     			System.out.println("Phone Number Changed to: " + newPhoneNumber);
     		}
-    		if(input==6) editCards();
+    		if(input==6) modifyPaymentMenu();
     		if(input==7) editLocations();
     		if(input==8) allOrdersScreen();
     		if(input==9) homeScreen();
@@ -374,9 +385,82 @@ public class Tiger{
 		
 	}
 
-	private static void editCards() {
+	private static void modifyPaymentMenu() {
+            Scanner sc = new Scanner(System.in);
             
+            CardService cardService = new CardService(con); 
+            ArrayList<Card> allCards = cardService.getUserCards(currentUser.getUserId());
+            if (allCards.isEmpty()) {
+                System.out.println();
+                System.out.println("You have no credit cards.");
+                System.out.println();
+                System.out.println("1. Add a credit card");
+                System.out.println("2. Go back");
+                
+                switch (sc.nextInt()) {
+                case 1:
+                    addCreditCardMenu();
+                    break;
+                default:
+                    accountScreen();
+                    break;
+                }
+            } else {
+                System.out.println();
+                System.out.println("Your credit cards");
+                for (int i = 0; i < allCards.size(); i++) {
+                    System.out.println(i+1 + ". " + allCards.get(i).getCardNumber());
+                }
+                System.out.println();
+                System.out.println("1. Delete a card");
+                System.out.println("2. Add a new card");
+                System.out.println("3. Go back");
+                
+                switch (sc.nextInt()) {
+                case 1:
+                    deleteCreditCardMenu(allCards);
+                    break;
+                case 2:
+                    addCreditCardMenu();
+                    break;
+                case 3:
+                    accountScreen();
+                    break;
+                }
+            }
+            
+            modifyPaymentMenu();
 	}
+        
+        private static void addCreditCardMenu() {
+            Scanner sc = new Scanner(System.in);
+            
+            System.out.println();
+            System.out.println("Enter your card number: ");
+            String cardNumber = sc.nextLine();
+            
+            System.out.println("Enter your security code: ");
+            String securityCode = sc.nextLine();
+            
+            System.out.println("Enter your expiry date (mm/dd/yyyy): ");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            formatter = formatter.withLocale(Locale.US);
+            Date expiryDate = Date.valueOf(LocalDate.parse(sc.nextLine(), formatter));
+            
+            sw.addCreditCard(currentUser.getUserId(), cardNumber, securityCode, expiryDate);
+        }
+        
+        private static void deleteCreditCardMenu(List<Card> allCards) {
+            Scanner sc = new Scanner(System.in);
+            
+            System.out.println();
+            System.out.println("Select which card you want to delete (Use the list #):");
+            int choice = sc.nextInt()-1;
+            Card cardToDelete = allCards.get(choice);
+            
+            CardService cardService = new CardService(con);
+            cardService.deleteById(cardToDelete.getCardId());
+        }
 
 	private static String editString() {
 		System.out.println("Enter new value");
@@ -424,7 +508,6 @@ public class Tiger{
 		System.out.println("1. Yes");
 		System.out.println("2. No");
 	    int input = sc.nextInt();
-	    if(input==1) return true;
-	    return false;
+	    return input==1;
 	}
 }

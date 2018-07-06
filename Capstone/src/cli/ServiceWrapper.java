@@ -1,14 +1,16 @@
 package cli;
 
+import static cli.AdminAndManager.con;
+import static cli.Tiger.sc;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 
 import domain.*;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Scanner;
+import services.CardService;
 
 
 import services.MenuServices;
@@ -61,7 +63,7 @@ public class ServiceWrapper {
 			count++;
 			System.out.println(count + ". " + option);
 		}
-		
+
 	}
 	
 	public static void printMenuItems(ArrayList<Menu> menus){
@@ -119,6 +121,21 @@ public class ServiceWrapper {
 		}
 		return total;
 	}
-
-
+        
+    public void addCreditCard(
+            String userId, 
+            String cardNumber, 
+            String securityCode, 
+            Date expiryDate) 
+    {
+        String cardId = Double.toString(Math.random() * 10001);
+        CardService cardService = new CardService(con);
+        Card newCard = new Card(
+                cardId,
+                userId,
+                cardNumber,
+                expiryDate,
+                securityCode);
+        cardService.add(newCard);
+    }
 }
