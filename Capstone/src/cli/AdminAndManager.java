@@ -13,7 +13,11 @@ import domain.Menu;
 import domain.Order;
 import domain.Store;
 import domain.User;
+import java.sql.CallableStatement;
+
 import services.CardService;
+import services.DeliveryMethod;
+import services.DeliveryMethodService;
 import services.MenuServices;
 import services.OrderService;
 import services.StoreService;
@@ -22,6 +26,8 @@ import services.UserService;
 public class AdminAndManager {
 	
 	static Connection con;
+        //CallableStatement orclCallableStatement;
+
 	
 	public AdminAndManager(Connection con){
 		AdminAndManager.con = con;
@@ -64,8 +70,15 @@ public class AdminAndManager {
 	    	case 3:
 	    		option = optionsScreen("Delivery Method");
                         switch(option){
-                         //case 1:();
-                            
+                        case 1:
+                                alterDeliveryMethod();
+                                break;
+                        case 2: addDeliveryMethod();
+                                break;
+                        case 3: deleteDeliveryMethod();
+                                break;
+                        case 4: 
+                                adminScreen();
                             
                         }
                             
@@ -141,7 +154,7 @@ public class AdminAndManager {
 	}
 
 	//Doesn't work
-	public static void addCardScreen(){
+	public void addCardScreen(){
 		System.out.println("Add a Credit Card");
 		Scanner sc = new Scanner(System.in);
 		System.out.println("\nEnter Card id: ");
@@ -159,11 +172,22 @@ public class AdminAndManager {
 		Date expiryDate= new Date(year, month, day);
 		System.out.println("Enter Security code: ");
 		String securityCode= sc.next();
-		Card c = new Card(cardId, userId, cardNumber, expiryDate, securityCode);
-		
-		CardService cs = new CardService(con);
-		cs.add(c);
-		AdminAndManager aam = new AdminAndManager(con);
+              
+                  /**
+                   Card c = new Card();
+                   c.setCardId(cardId);
+                   c.setUserId(userId);
+                   c.setExpiryDate(expiryDate);
+                   c.setSecurityCode(securityCode);
+                   **/
+             
+                Card c = new Card(cardId, userId, cardNumber, expiryDate, securityCode);
+		                	
+
+	       CardService cs = new CardService(con);
+	       cs.add(c);
+               
+                AdminAndManager aam = new AdminAndManager(con);
 		aam.adminScreen();
 	}
 
@@ -222,6 +246,78 @@ public class AdminAndManager {
 		aam.adminScreen();
 	}
 	
+     
+        
+        
+        public static void alterDeliveryMethod(){
+            
+            System.out.println("List of delivery methods");
+                DeliveryMethodService ms = new DeliveryMethodService(con);
+		ArrayList<DeliveryMethod> dm = ms.getAll();
+	
+		int count=1;
+		for(DeliveryMethod c:dm){
+			System.out.println(count + ": " + c.getDelivery_method());
+			count++;
+		}
+		System.out.println("Enter the id of the method you would like to alter");
+		Scanner sc = new Scanner(System.in);
+	    int input = sc.nextInt();
+	    
+	    String cardId= dm.get(input-1).getDelivery_method_id();
+	    
+		System.out.println("Enter the new delivery method Id: ");
+		int delivery_method_id= sc.nextInt();
+		System.out.println("Enter the new delivery method name");
+		String delivery_method  = sc.next();                
+                //stops working here
+                DeliveryMethod m = new DeliveryMethod(delivery_method_id, delivery_method);
+		
+                ms.update(m);
+		AdminAndManager aam = new AdminAndManager(con);
+		aam.adminScreen();
+         
+        }
+           
+        public static void addDeliveryMethod(){
+            System.out.println("Add a delivery method");
+            Scanner sc = new Scanner(System.in);
+            
+            System.out.println("\n Enter a new delivery method id: ");
+            int delivery_method_id = sc.nextInt();
+            System.out.println("\n Enter a new delivery method:");
+            String delivery_method = sc.next();
+            
+            DeliveryMethod addnew = new DeliveryMethod(delivery_method_id, delivery_method);
+            System.out.println("new delivery method added");
+            
+        }
+        
+        
+        public static void deleteDeliveryMethod(){
+            System.out.println("Please choose which delivery method you would like to delete:");
+            DeliveryMethodService ms = new DeliveryMethodService(con);
+            ArrayList<DeliveryMethod> dm = ms.getAll();
+	    int count=1;
+       	    for(DeliveryMethod c:dm){
+            System.out.println(count + ": " + c.getDelivery_method());
+        	count++;
+		} 
+            System.out.println("Enter the id of the method you would like to delete");
+		Scanner sc = new Scanner(System.in);
+	    int input = sc.nextInt();
+	    
+	    String cardId= dm.get(input-1).getDelivery_method_id();
+	    
+        }
+        
+        
+        
+        
+        
+        
+        
+        
 	public static void addItemScreen(){
 		System.out.println("Add an item");
 		Scanner sc = new Scanner(System.in);
@@ -249,7 +345,8 @@ public class AdminAndManager {
 		MenuServices menServ = new MenuServices(con);
 		menServ.add(men);
 		System.out.println("\n" + name + " added to database\n");
-		AdminAndManager aam = new AdminAndManager(con);
+                //error occurs here
+            AdminAndManager aam = new AdminAndManager(con);
 		aam.adminScreen();
 		
 	}
@@ -345,4 +442,5 @@ public class AdminAndManager {
 	    System.out.println(uArr.get(input-1).getFirstName() + "has been deleted");
 		
 	}
+
 }
