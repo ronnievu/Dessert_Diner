@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+
 import domain.Card;
 import domain.Menu;
 import domain.Order;
@@ -18,6 +19,8 @@ import java.sql.CallableStatement;
 import services.CardService;
 import services.DeliveryMethod;
 import services.DeliveryMethodService;
+import services.DeliveryStatus;
+import services.DeliveryStatusService;
 import services.MenuServices;
 import services.OrderService;
 import services.StoreService;
@@ -84,7 +87,24 @@ public class AdminAndManager {
                             
                         
 	    	case 4:
-	    		optionsScreen("Delivery Statuse");
+	    		optionsScreen("Delivery Status");
+                        switch(option){
+                            case 1:
+                                   alterDeliveryStatus(); //goes to alter item ?
+                                   break;
+                            case 2: 
+                                   addDeliveryStatus();
+                                   break;
+                            case 3:
+                                   deleteDeliveryStatus();
+                                   break;
+                            case 4:
+                                   adminScreen();
+                        
+                        }
+                        
+                        
+                        
 	    	case 5:
 	    	{
 	    		option = optionsScreen("Item");
@@ -153,7 +173,7 @@ public class AdminAndManager {
 		return input;
 	}
 
-	//Doesn't work
+
 	public void addCardScreen(){
 		System.out.println("Add a Credit Card");
 		Scanner sc = new Scanner(System.in);
@@ -172,15 +192,7 @@ public class AdminAndManager {
 		Date expiryDate= new Date(year, month, day);
 		System.out.println("Enter Security code: ");
 		String securityCode= sc.next();
-              
-                  /**
-                   Card c = new Card();
-                   c.setCardId(cardId);
-                   c.setUserId(userId);
-                   c.setExpiryDate(expiryDate);
-                   c.setSecurityCode(securityCode);
-                   **/
-             
+                        
                 Card c = new Card(cardId, userId, cardNumber, expiryDate, securityCode);
 		                	
 
@@ -267,13 +279,15 @@ public class AdminAndManager {
 	    String cardId= dm.get(input-1).getDelivery_method_id();
 	    
 		System.out.println("Enter the new delivery method Id: ");
-		int delivery_method_id= sc.nextInt();
+		String delivery_method_id= sc.next();
+                System.out.println("entered: " + delivery_method_id);
 		System.out.println("Enter the new delivery method name");
 		String delivery_method  = sc.next();                
                 //stops working here
                 DeliveryMethod m = new DeliveryMethod(delivery_method_id, delivery_method);
 		
                 ms.update(m);
+                System.out.println("altered delivery method");
 		AdminAndManager aam = new AdminAndManager(con);
 		aam.adminScreen();
          
@@ -284,12 +298,17 @@ public class AdminAndManager {
             Scanner sc = new Scanner(System.in);
             
             System.out.println("\n Enter a new delivery method id: ");
-            int delivery_method_id = sc.nextInt();
+            String delivery_method_id = sc.next();
             System.out.println("\n Enter a new delivery method:");
             String delivery_method = sc.next();
             
             DeliveryMethod addnew = new DeliveryMethod(delivery_method_id, delivery_method);
             System.out.println("new delivery method added");
+          
+            
+            
+            
+            
             
         }
         
@@ -307,14 +326,48 @@ public class AdminAndManager {
 		Scanner sc = new Scanner(System.in);
 	    int input = sc.nextInt();
 	    
-	    String cardId= dm.get(input-1).getDelivery_method_id();
-	    
+            
+             ms.deleteById(dm.get(input-1).getDelivery_method_id());
+	    System.out.println("Deleted Card");
+	  
+            
         }
         
         
         
+        //not working skipping over it?
+        public static void alterDeliveryStatus(){
+            
+            System.out.println("List of Delivery Statuses");
+                DeliveryStatusService ds = new DeliveryStatusService(con);
+		ArrayList<DeliveryStatus> dl = ds.getAll();
+		int count=1;
+		for(DeliveryStatus d:dl){
+			System.out.println(count + ": " + d.getDelivery_status_id());
+			count++;
+		}
+		System.out.println("Enter the number of the delivery status youd like to alter");
+		Scanner sc = new Scanner(System.in);
+	    int input = sc.nextInt();
+	    
+	    String delivery_status_id= dl.get(input-1).getDelivery_status();
+	  //  System.out.println("what would you like to alter?");
+	//	String userId= sc.next();
+           //asl team about alter options fort this??  
+            
+            
+            
+        }
         
+        public static void addDeliveryStatus(){
+            
+            System.out.println("testttt");
+            
+        }
         
+        public static void deleteDeliveryStatus(){
+            
+        }
         
         
         
