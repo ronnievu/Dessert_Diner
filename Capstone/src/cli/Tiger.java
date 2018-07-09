@@ -11,6 +11,8 @@ import domain.Menu;
 import domain.Order;
 import domain.Store;
 import domain.User;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -70,6 +72,7 @@ public class Tiger{
 			System.out.println(count + ". " + option);
 		}
 
+            int input = sc.nextInt();
             boolean end = false;
             
                 switch(input){
@@ -258,12 +261,12 @@ public class Tiger{
 			currentOrder.setOrder_id(Double.toString(Math.random()* 10001));
 			currentOrder.setUser_id(currentUser.getUserId());
 			currentOrder.setDelivery_status_id("0");
+                        currentOrderScreen();
 	    }
 	    if(input==2) viewEditOrderItems(currentOrder);
 	    if(input==3) editOrder(currentOrder);
 	    if(input==4 && confirm()) {
-                orderConfirmationMessage(currentUser.getFirstName(), currentUser.getLastName(), currentUser.getEmail(), currentOrder);
-                
+
                 ArrayList<String> itemIds = currentOrder.getItem_ids();
 		ArrayList<Menu> items = sw.getMenuItems(itemIds);
 		if(items.isEmpty()){
@@ -272,6 +275,12 @@ public class Tiger{
                 }
                 else{
                     sw.submitOrder(currentOrder);
+                    orderConfirmationMessage(currentUser.getFirstName(), currentUser.getLastName(), currentUser.getEmail(), currentOrder);
+                
+                    currentOrder = new Order();
+                    currentOrder.setOrder_id(Double.toString(Math.random()* 10001));
+                    currentOrder.setUser_id(currentUser.getUserId());
+		    currentOrder.setDelivery_status_id("0");
                     homeScreen();
                 }
 
@@ -627,7 +636,14 @@ public class Tiger{
                 ServiceWrapper.printReceipt(items,order);
                 
                 MimeBodyPart attachment = new MimeBodyPart();
-                String file = "C:/Users/syntel.PHX440G3-2815XW/Documents/GitHub/Dessert_Diner/Capstone/src/cli/receipt.txt";
+                
+                Path currentRelativePath = Paths.get("");
+                String s = currentRelativePath.toAbsolutePath().toString();
+                String finalPath = s + "\\src\\cli\\receipt.txt";
+                //System.out.println("Current relative path is: " + finalPath);
+                
+                
+                String file = finalPath;
                 DataSource source = new FileDataSource(file);
                 attachment.setDataHandler(new DataHandler(source));
                 attachment.setFileName(file);

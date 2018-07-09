@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 import services.MenuServices;
@@ -87,7 +89,15 @@ public class ServiceWrapper {
             try{
                 File myfile;
                 Writer out;
-                myfile = new File("C:/Users/syntel.PHX440G3-2815XW/Documents/GitHub/Dessert_Diner/Capstone/src/cli/receipt.txt");
+                
+                
+                Path currentRelativePath = Paths.get("");
+                String s = currentRelativePath.toAbsolutePath().toString();
+                String finalPath = s + "\\src\\cli\\receipt.txt";
+                //System.out.println("Current relative path is: " + finalPath);
+                
+                
+                myfile = new File(finalPath);
                 out = new FileWriter(myfile, false);
                 for(Menu menu: menus){
                     count++; 
