@@ -1,0 +1,11 @@
+Mummy's Diner Receipt 
+
+1. $6.99 Chicken
+2. $6.99 Chicken
+3. $6.99 Chicken
+4. $6.99 Chicken
+5. $6.99 Chicken
+6. $6.99 Chicken
+
+
+Order Total: $36.0

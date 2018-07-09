@@ -10,16 +10,20 @@ import domain.Menu;
 import domain.Order;
 import domain.Store;
 import domain.User;
-import static java.lang.ProcessBuilder.Redirect.from;
-import static java.lang.ProcessBuilder.Redirect.to;
 import java.util.Properties;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import services.MenuServices;
 import services.OrderService;
 import services.StoreService;
@@ -61,19 +65,28 @@ public class Tiger{
 		}
 		
 	    int input = sc.nextInt();
-	    switch(input){
-    		case 1:
-    			loginScreen();
-    		case 2:
-    			registerScreen();    	
-    		case 3:
-    			System.out.println("Goodbye");
-    			System.exit(0);
-    		case 4:
-    			AdminAndManager aam = new AdminAndManager(con);
-    			aam.adminScreen();
-	    }
-
+            boolean end = false;
+            
+                switch(input){
+                    case 1:
+                            loginScreen();
+                            
+                            break;
+                    case 2:
+                            registerScreen();
+                          
+                            break;
+                    case 3:
+                            System.out.println("Goodbye");
+                            
+                            break;
+                    case 4:
+                            AdminAndManager aam = new AdminAndManager(con);
+                            aam.adminScreen();
+                            
+                            break;
+                }
+            
 	}
 		
 	public static void loginScreen(){
@@ -140,7 +153,7 @@ public class Tiger{
 	    String status = sc.next();*/
 	    //, street, city, state, country, zip, status
 	    if(password.equals(passwordConfirm)){
-	    	System.out.println("Registered");
+	    	System.out.println("Registered! Check for email for confirmation");
                 accountActivationMessage(first,last,email);
 	    	currentUser = sw.register(first, last, phone, email, password);
 			currentOrder = new Order();
@@ -171,16 +184,20 @@ public class Tiger{
 			count++;
 			System.out.println(count + ". " + option);
 		}
-	    int input = sc.nextInt();
-		if(input==1) menuScreen();
-		if(input==2) currentOrderScreen();    	
-		if(input==3) accountScreen();
-		if(input==4) storeDetailsScreen();   	
-		if(input==5) firstScreen();
-		if(input==6) {
-			System.out.println("Goodbye");
-    		System.exit(0);
-	    }
+                boolean end = false;
+                
+                while(end == false){
+                    int input = sc.nextInt();
+                    if(input==1) menuScreen();
+                    if(input==2) currentOrderScreen();    	
+                    if(input==3) accountScreen();
+                    if(input==4) storeDetailsScreen();   	
+                    if(input==5) firstScreen();
+                    if(input==6) {
+                            System.out.println("Goodbye");
+                            end = true;
+                    }
+                }
 	}
 	
 	public static void menuScreen(){
@@ -233,7 +250,21 @@ public class Tiger{
 	    }
 	    if(input==2) viewEditOrderItems(currentOrder);
 	    if(input==3) editOrder(currentOrder);
-	    if(input==4 && confirm()) sw.submitOrder(currentOrder);
+	    if(input==4 && confirm()) {
+                orderConfirmationMessage(currentUser.getFirstName(), currentUser.getLastName(), currentUser.getEmail(), currentOrder);
+                
+                ArrayList<String> itemIds = currentOrder.getItem_ids();
+		ArrayList<Menu> items = sw.getMenuItems(itemIds);
+		if(items.isEmpty()){
+                    System.out.println("No items in cart!");
+                    currentOrderScreen();
+                }
+                else{
+                    sw.submitOrder(currentOrder);
+                    homeScreen();
+                }
+
+            }
 	    else if(input==5) homeScreen();
 	}
 	
@@ -322,6 +353,7 @@ public class Tiger{
 	   // }
 	    //OrderService os = new OrderService(con);
 	    //os.update(currentOrder);
+            homeScreen();
 	}
 	
 	public static void accountScreen(){
@@ -467,6 +499,61 @@ public class Tiger{
                 
                 Transport.send(message);
                 System.out.println("Account creation message sent...");
+                
+            }catch(MessagingException me){
+                me.printStackTrace();
+            }
+        }
+        
+        public static void orderConfirmationMessage(String firstName, String lastName, String email, Order order){
+            String to = email;
+            String from = "testmummybusiness@gmail.com";
+            
+            Properties prop = System.getProperties();
+            prop.put("mail.smtp.host","smtp.gmail.com");
+            prop.put("mailsmtp.socketFactory.port", "465");
+            prop.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            prop.put("mail.smtp.auth", "true");
+            prop.put("mail.smtp.port", "465");
+            
+            Session session = Session.getDefaultInstance(prop, 
+                    new javax.mail.Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication("testmummybusiness@gmail.com", "test123@");
+                        }
+                    });
+            try{
+                MimeMessage message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(from));
+                message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+                message.setSubject("Thank you for placing your orders !");
+                
+                String text = "Hello Mr. " + firstName + " " + lastName + ", \n\n " +
+                        "Thank you for placing an order with us! Hopefully the food is up to your " +
+                        "standards and we hope to have another order from you! Also attached to this " +
+                        "email is your receipt for this order. \n\n" + 
+                        "Thank you for ordering from Mummy's, \n Mama Mummy";
+                
+                MimeBodyPart messageBody = new MimeBodyPart();
+                messageBody.setContent(text,"text/html");
+                
+                Multipart multipart = new MimeMultipart();
+                multipart.addBodyPart(messageBody);
+                
+                ArrayList<String> itemIds = currentOrder.getItem_ids();
+		ArrayList<Menu> items = sw.getMenuItems(itemIds);
+                ServiceWrapper.printReceipt(items,order);
+                
+                MimeBodyPart attachment = new MimeBodyPart();
+                String file = "C:/Users/syntel.PHX440G3-2815XW/Documents/GitHub/Dessert_Diner/Capstone/src/cli/receipt.txt";
+                DataSource source = new FileDataSource(file);
+                attachment.setDataHandler(new DataHandler(source));
+                attachment.setFileName(file);
+                multipart.addBodyPart(attachment);
+                
+                message.setContent(multipart);
+                Transport.send(message);
+                System.out.println("Order receipt creation message sent...");
                 
             }catch(MessagingException me){
                 me.printStackTrace();
