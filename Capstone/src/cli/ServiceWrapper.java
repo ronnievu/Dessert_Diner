@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 
 import domain.*;
+import services.LocationService;
 
 
 import services.MenuServices;
@@ -18,6 +19,7 @@ import services.UserService;
 public class ServiceWrapper {
 	
 	Connection con;
+        Location loc;
 	
 	
 	
@@ -36,17 +38,24 @@ public class ServiceWrapper {
 		else return null;
 	}
 	
-	public User register(String firstName, String lastName, String phone, String email, String password){
+	public User register(String firstName, String lastName, String phone, String email, String password, String street, String city, String country, String state, String zip){
 		//, String street, String city, String state, String country, String zip, String userStatus
 		boolean result = false;
 		String userId = Double.toString(Math.random()* 10001);
+                String locationId = Double.toString(Math.random()* 10001);
 		String userStatusId = "1";
-
+                loc = new Location(locationId, userId, 5.6 , street, city, country, state, zip);
 		User user = new User(userId,firstName,lastName,phone, email,password,userStatusId);
 		UserService us = new UserService(con);
-		result =  us.add(user);
+                LocationService ls= new LocationService(con);
+                result =  us.add(user);
+                result=ls.add(loc);
 		return user;
 	}
+        
+        public Location getloc(){
+            return loc;
+        }
 
 	public static void printOptions(ArrayList<String> options){
 		options.add("Go back");

@@ -308,7 +308,7 @@ public class AdminAndManager {
 		String userStatusId = sc.next();
 		System.out.println("Enter location id: ");
 		String locationId = sc.next();
-		User u = new User(userId, firstName, lastName, email, password, userStatusId, locationId);
+		User u = new User(userId, firstName, lastName, email, password, userStatusId,locationId);
 		UserService us = new UserService(con);
 		us.add(u);
 		
