@@ -28,6 +28,7 @@ import services.MenuServices;
 import services.OrderService;
 import services.StoreService;
 import services.UserService;
+import services.UserStatusService;
 
 public class AdminAndManager {
 	
@@ -63,7 +64,7 @@ public class AdminAndManager {
 	    			option = optionsScreen("Card");
 	    			switch(option){
 	    				case 1:
-	    					alterCardScreen();
+	    					alterCardScreen(); //bug
 	    				case 2:
 	    					addCardScreen(); //works
 	    				case 3:
@@ -77,7 +78,7 @@ public class AdminAndManager {
 	    		option = optionsScreen("Delivery Method");
                         switch(option){
                         case 1:
-                                alterDeliveryMethod(); //works not storing though?
+                                alterDeliveryMethod(); //works not storing though? bug
                                 break;
                         case 2: addDeliveryMethod(); //works 
                                 break;
@@ -93,7 +94,7 @@ public class AdminAndManager {
 	    		option = optionsScreen("Delivery Status");
                         switch(option){
                             case 1:
-                                   alterDeliveryStatus(); //goes to alter item ?
+                                   alterDeliveryStatus(); //goes to alter item Screen - bug
                                    break;
                             case 2: 
                                    addDeliveryStatus(); //works
@@ -126,7 +127,7 @@ public class AdminAndManager {
     			}
     			break;
 	    	}
-	    	case 6: //THERE IS NO ITEM TYPE SERVICE OR CLASS 
+	    	case 6: //THERE IS NO "ItemTypesService" class OR "ItemTypes" CLASS 
 	    		option = optionsScreen("Item Type");
                         switch(option){
     				case 1:
@@ -147,10 +148,10 @@ public class AdminAndManager {
 	    		option = optionsScreen("Location");
                         switch(option){
                             case 1:
-                                    alterLocationScreen();
+                                    alterLocationScreen(); //bug 
                                     break;
                             case 2:
-                                    addLocationScreen(); //returns invalid index column?
+                                    addLocationScreen(); //returns invalid index column? bug
                                     break;
                             case 3: 
                                     deleteLocationScreen(); //works
@@ -159,16 +160,38 @@ public class AdminAndManager {
                                     adminScreen();
                         }
                         
-	    	case 8:
+	    	case 8: //loops through to the next case
+                         //for example when choose case 2 to add 
+                         //outputs "how would you like to alter order items"
 	    		optionsScreen("Order");
-	    	case 9:
+                        switch(option){
+                            case 1:
+                                   alterOrderScreen();
+                                   break;
+                            case 2:
+                                   addOrderScreen();
+                                   break;
+                            case 3:
+                                   deleteOrderScreen();
+                                   break;
+                            case 4:
+                                   adminScreen();
+                                
+                        }
+                        
+                        
+                        
+                        
+	    	case 9: //loops through to next case 
+                        //"how would you like to alter User"
+                        //also is this neccessary??
 	    		optionsScreen("Order Item");
 	    	case 10:
 	    	{
 	    		option = optionsScreen("User");
 	    		switch(option){
 	    			case 1:
-	    				alterUserScreen(); //working not storing changes ?
+	    				alterUserScreen(); //working not storing changes? bug
                                         break;
 	    			case 2:
 	    				addUserScreen(); //works
@@ -181,20 +204,20 @@ public class AdminAndManager {
 	    		option = optionsScreen("User Statuse");
                         switch(option){
                             case 1:
-                                    alterUserStatusScreen();
+                                    alterUserStatusScreen(); //goes to home screen?
                                     break;
                             case 2:
-                                    addUserStatusScreen();
+                                    addUserStatusScreen(); //wont store - bug
                                     break;
                             case 3:
-                                   deleteUserStatusScreen();
+                                   deleteUserStatusScreen(); //havent tested deleting 
                                    break;
                             case 4:
                                 adminScreen();
                         }
                         
 	    	case 12:
-                        firstScreen();
+                        firstScreen(); //works 
                         
 	    	case 13:
 	    		System.exit(0);
@@ -459,8 +482,8 @@ public class AdminAndManager {
         
         
 	public static void addItemScreen(){
-		System.out.println("Add an item");
-		Scanner sc = new Scanner(System.in);
+            System.out.println("Add an item");
+	    Scanner sc = new Scanner(System.in);
 	    System.out.println("\nEnter item id: ");
 	    String id= sc.next();
 	    System.out.println("\nEnter item name: ");
@@ -746,6 +769,37 @@ public class AdminAndManager {
          
          public static void alterUserStatusScreen(){
              
+              System.out.println("List of User Statuses");
+               UserStatusService ms = new UserStatusService(con);
+		ArrayList<UserStatus> dm = ms.getAll();
+	
+		int count=1;
+		for(UserStatus c:dm){
+			System.out.println(count + ": " + c.getUserStatusId());
+			count++;
+		}
+		System.out.println("Enter the id of the Order you would like to alter");
+		Scanner sc = new Scanner(System.in);
+	    int input = sc.nextInt();
+	    
+	    String userStatusId= dm.get(input-1).getUserStatusId();
+	  
+             System.out.println("\nEnter a new user status Id: ");
+         //    String userStatusId = sc.next();
+             System.out.println("\nEnter a new user status: ");
+             String userStatus = sc.next();
+	    
+	     
+            
+             System.out.println("user updated!");
+                AdminAndManager aam = new AdminAndManager(con);
+		aam.adminScreen();
+             
+             
+             
+             
+             
+             
          }
          
          public static void addUserStatusScreen(){
@@ -767,10 +821,135 @@ public class AdminAndManager {
          
          public static void deleteUserStatusScreen(){
              
+             System.out.println("List of user statuses");
+		UserStatusService us = new UserStatusService(con);
+		ArrayList<UserStatus> uArr = us.getAll();
+		int count=1;
+		for(UserStatus u:uArr){
+			System.out.println(count + " " + u.getUserStatusId() + " " + u.getUserStatus());
+			count++;
+		}
+		
+		System.out.println("Select user status id you'd like to delete");
+		Scanner sc = new Scanner(System.in);
+	    int input = sc.nextInt();
+	    us.deleteById(uArr.get(input-1).getUserStatusId());
+	    System.out.println(uArr.get(input-1).getUserStatusId() + "has been deleted");
+             
+             
          }
          
          
+         public static void alterOrderScreen(){
+            
+           System.out.println("List of Orders");
+                OrderService ms = new OrderService(con);
+		ArrayList<Order> dm = ms.getAll();
+	
+		int count=1;
+		for(Order c:dm){
+			System.out.println(count + ": " + c.getOrder_id());
+			count++;
+		}
+		System.out.println("Enter the id of the Order you would like to alter");
+		Scanner sc = new Scanner(System.in);
+	    int input = sc.nextInt();
+	    
+	    String order_id= dm.get(input-1).getOrder_id();
+	    
+	    
+	     System.out.println("\nEnter the new id of user this card belongs to: ");
+             String user_id= sc.next();
+	     System.out.println("\nEnter the new tip: ");
+             float tip = sc.nextFloat();
+	     System.out.println("\nEnter the new total price: ");
+	     float total_price = sc.nextFloat();
+	     System.out.println("\nEnter the new placed time stamp: ");
+             int placed_stamp = sc.nextInt();
+	     System.out.println("\nEnter the new delivery time stamp: ");
+	     int delivery_stamp = sc.nextInt();
+             System.out.println("\nEnter the new card id: ");
+             String card_id = sc.next();
+             System.out.println("\n Enter the new Instructions: ");
+             String instructions = sc.next();
+             System.out.println("\n Enter the new delivery method: ");
+             String delivery_method = sc.next();
+             System.out.println("\n Enter the new store id ");
+             String store_id = sc.next();
+             System.out.println("\n Enter the new delivery status id");
+             String delivery_status_id = sc.next();
+             Order ord = new Order(order_id,user_id,tip,total_price,placed_stamp,delivery_stamp,card_id,instructions,delivery_method,store_id,delivery_status_id);
+             OrderService os = new OrderService(con);
+              os.update(ord);
+             System.out.println("Order updated!");
+                AdminAndManager aam = new AdminAndManager(con);
+		aam.adminScreen();
+             
+             
+             
+             
+             
+             
+         }
          
+         
+         public static void addOrderScreen(){
+             
+             System.out.println("Add an order");
+             Scanner sc = new Scanner(System.in);
+	     System.out.println("\nEnter Order id: ");
+	     String order_id= sc.next();
+	     System.out.println("\nEnter id of user this card belongs to: ");
+             String user_id= sc.next();
+	     System.out.println("\nEnter tip: ");
+             float tip = sc.nextFloat();
+	     System.out.println("\nEnter total price: ");
+	     float total_price = sc.nextFloat();
+	     System.out.println("\nEnter placed time stamp: ");
+             int placed_stamp = sc.nextInt();
+	     System.out.println("\nEnter delivery time stamp: ");
+	     int delivery_stamp = sc.nextInt();
+             System.out.println("\nEnter card id: ");
+             String card_id = sc.next();
+             System.out.println("\n Enter Instructions: ");
+             String instructions = sc.next();
+             System.out.println("\n Enter delivery method: ");
+             String delivery_method = sc.next();
+             System.out.println("\n Enter store id ");
+             String store_id = sc.next();
+             System.out.println("\n Enter delivery status id");
+             String delivery_status_id = sc.next();
+             Order ord = new Order(order_id,user_id,tip,total_price,placed_stamp,delivery_stamp,card_id,instructions,delivery_method,store_id,delivery_status_id);
+             OrderService os = new OrderService(con);
+             os.add(ord);
+             System.out.println("Order added!");
+                AdminAndManager aam = new AdminAndManager(con);
+		aam.adminScreen();
+             
+             
+             
+             
+             
+         }
+         
+         public static void deleteOrderScreen(){
+              System.out.println("List of Orders");
+             OrderService ls = new OrderService(con);
+             ArrayList<Order> ll = ls.getAll();
+             int count=1;
+             for(Order l:ll){
+                 System.out.println(count + ": "+ l.getOrder_id());
+                 count++;
+             }
+             System.out.println("Select the order youd like to delete");
+             Scanner sc = new Scanner(System.in);
+             int input = sc.nextInt();
+             ls.deleteById(ll.get(input-1).getOrder_id());
+             System.out.println("Delete location");
+             
+             
+             
+         }
          
          
          
