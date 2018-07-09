@@ -1,10 +1,16 @@
 package cli;
 
+import static cli.AdminAndManager.con;
+import static cli.Tiger.sc;
 import java.sql.Connection;
 import java.util.ArrayList;
 
 
 import domain.*;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Scanner;
+import services.CardService;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +33,12 @@ public class ServiceWrapper {
 		this.con = con;
 
 	}
+        
+        public boolean isEmailTaken(String email) {
+            UserService us = new UserService(con);
+            User user = us.getByEmail(email);
+            return user != null;
+        }
 
 	public User login(String email, String password){
 		
@@ -56,7 +68,7 @@ public class ServiceWrapper {
 			count++;
 			System.out.println(count + ". " + option);
 		}
-		
+
 	}
 	
 	public static void printMenuItems(ArrayList<Menu> menus){
@@ -140,6 +152,21 @@ public class ServiceWrapper {
 		}
 		return total;
 	}
-
-
+        
+    public void addCreditCard(
+            String userId, 
+            String cardNumber, 
+            String securityCode, 
+            Date expiryDate) 
+    {
+        String cardId = Double.toString(Math.random() * 10001);
+        CardService cardService = new CardService(con);
+        Card newCard = new Card(
+                cardId,
+                userId,
+                cardNumber,
+                expiryDate,
+                securityCode);
+        cardService.add(newCard);
+    }
 }
