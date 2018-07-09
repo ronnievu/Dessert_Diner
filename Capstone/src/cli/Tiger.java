@@ -491,7 +491,7 @@ public class Tiger{
                 message.setFrom(new InternetAddress(from));
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
                 message.setSubject("Thank you for creating you account!");
-                message.setText("Hello Mr. " + firstName + " " + lastName + ", \n\n " +
+                message.setText("Hello" + firstName + " " + lastName + ", \n\n " +
                         "First off I want to welcome you to the Mummy family. You can check out " + 
                         "our specials and menu options on your homepage. We hope you enjoy our food " +
                         "you leave with a food coma. So enjoy your access to our food. \n\n" + 
@@ -528,7 +528,7 @@ public class Tiger{
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
                 message.setSubject("Thank you for placing your orders !");
                 
-                String text = "Hello Mr. " + firstName + " " + lastName + ", \n\n " +
+                String text = "Hello " + firstName + " " + lastName + ", \n\n " +
                         "Thank you for placing an order with us! Hopefully the food is up to your " +
                         "standards and we hope to have another order from you! Also attached to this " +
                         "email is your receipt for this order. \n\n" + 
