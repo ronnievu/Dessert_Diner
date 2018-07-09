@@ -11,6 +11,11 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Scanner;
 import services.CardService;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.FileWriter;
+import java.io.Writer;
 
 
 import services.MenuServices;
@@ -74,14 +79,40 @@ public class ServiceWrapper {
 		}
 		System.out.println(++count + ". Go Back");
 	}
-
+        
+        public static void printReceipt(ArrayList<Menu> menus, Order order){
+            int count = 0;
+            BufferedWriter bufferedWriter = null;
+            String fileOut = "Mummy's Diner Receipt \n\n";
+            try{
+                File myfile;
+                Writer out;
+                myfile = new File("C:/Users/syntel.PHX440G3-2815XW/Documents/GitHub/Dessert_Diner/Capstone/src/cli/receipt.txt");
+                out = new FileWriter(myfile, false);
+                for(Menu menu: menus){
+                    count++; 
+                    fileOut += count + ". $" + menu.getPrice() + " " + menu.getName()+ "\n";
+                }
+                
+                bufferedWriter = new BufferedWriter(out);
+                bufferedWriter.write(fileOut);
+                bufferedWriter.write("\n\nOrder Total: $" + order.getTotal_price());
+            }catch(IOException io){
+                System.out.println("Couldn't open file");
+            }finally{
+                try{
+                    if(bufferedWriter != null) bufferedWriter.close();
+                } catch(Exception ex){}
+            }
+        }
+        
 	public static void printOrders(ArrayList<Order> orders){
-		int count = 0;
-		for(Order order: orders){
-			count++;
-			System.out.println(count + ". " + order.getPlaced_timestamp());
-		}
-		System.out.println(count++ + ". Go Back");
+            int count = 0;
+            for(Order order: orders){
+		count++;
+		System.out.println(count + ". " + order.getPlaced_timestamp());
+            }
+            System.out.println(count++ + ". Go Back");
 	}
 
 	public void cancelOrder(Order order) {

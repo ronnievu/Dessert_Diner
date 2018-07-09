@@ -30,20 +30,21 @@ public class OrderService implements Service<Order>{
 	public boolean add(Order order){
 		try{
 			//Add order items
+                        
 			CallableStatement statement = connection.prepareCall(
 					"{call AddOrder(?,?,?,?,?,?,?,?,?,?,?)}");
 			
-			statement.setString("ORDER_ID",order.getOrder_id());
-			statement.setString("USER_ID",order.getUser_id());
+			statement.setString("ORDERID",order.getOrder_id());
+			statement.setString("USERID",order.getUser_id());
 			statement.setFloat("TIP",order.getTip());
-			statement.setFloat("TOTAL_PRICE",order.getTotal_price());
-			statement.setInt("PLACED_TIMESTAMP",order.getPlaced_timestamp());
-			statement.setInt("DELIVERY_TIMESTAMP",order.getDelivery_timestamp());
-			statement.setString("CARD_ID",order.getCard_id());
+			statement.setFloat("TOTALPRICE",order.getTotal_price());
+			statement.setInt("PLACEDTIMESTAMP",order.getPlaced_timestamp());
+			statement.setInt("DELIVERYTIMESTAMP",order.getDelivery_timestamp());
+			statement.setString("CARDID",order.getCard_id());
 			statement.setString("INSTRUCTIONS",order.getInstuctions());
-			statement.setString("DELIVERY_METHOD_ID",order.getDelivery_method_id());
-			statement.setString("STORE_ID",order.getStore_id());
-			statement.setString("DELIVERY_STATUS_ID",order.getDelivery_status_id());
+			statement.setString("DELIVERYMETHODID",order.getDelivery_method_id());
+			statement.setString("STOREID",order.getStore_id());
+			statement.setString("DELIVERYSTATUSID",order.getDelivery_status_id());
 			statement.execute();
 			statement.close();
 			
