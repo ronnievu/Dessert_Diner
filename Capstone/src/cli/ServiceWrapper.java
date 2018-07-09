@@ -29,10 +29,10 @@ public class ServiceWrapper {
 
 	}
         
-        public boolean emailTaken(String email) {
+        public boolean isEmailTaken(String email) {
             UserService us = new UserService(con);
-            User candidate = us.getByEmail(email);
-            return email == null;
+            User user = us.getByEmail(email);
+            return user != null;
         }
 
 	public User login(String email, String password){
