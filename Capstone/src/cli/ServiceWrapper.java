@@ -1,15 +1,11 @@
 package cli;
 
-import static cli.AdminAndManager.con;
-import static cli.Tiger.sc;
 import java.sql.Connection;
 import java.util.ArrayList;
 
 
 import domain.*;
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.Scanner;
 import services.CardService;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -112,7 +108,7 @@ public class ServiceWrapper {
             }finally{
                 try{
                     if(bufferedWriter != null) bufferedWriter.close();
-                } catch(Exception ex){}
+                } catch(IOException ex){}
             }
         }
         

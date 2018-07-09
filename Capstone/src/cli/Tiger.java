@@ -87,52 +87,41 @@ public class Tiger{
                             System.out.println("Goodbye");
                             
                             break;
-                    case 4:
-                            AdminAndManager aam = new AdminAndManager(con);
-                            aam.adminScreen();
-                            
-                            break;
                 }
             
 	}
 		
 	public static void loginScreen(){
-		System.out.println("\n*Login*");
-		System.out.println("Enter email:");
+            System.out.println("\n*Login*");
+            System.out.println("Enter email:");
 	    String email = sc.next();
-		System.out.println("Enter password:");
+            System.out.println("Enter password:");
 	    String password = sc.next();
 	    
-		UserService us = new UserService(con);
-		User candidate = us.getByEmail(email);
-		if(candidate == null){
-			System.out.println("Wrong email");
-			firstScreen();
-                        return;
-		}
-		if(password.equals(candidate.getPassword())){
-			currentUser = candidate;
-			currentOrder = new Order();
-			currentOrder.setOrder_id(Double.toString(Math.random()* 10001));
-			currentOrder.setUser_id(currentUser.getUserId());
-			currentOrder.setDelivery_status_id("0");
-			//currentOrder.setCard_id();
-			StoreService ss = new StoreService(con);
-			currentStore = ss.getById("0");
-	    	homeScreen();
-	    }
-	    else{
-	    	System.out.println("Wrong email or password");
-	    	try {
-				TimeUnit.SECONDS.sleep(1);
-				firstScreen();
-			} catch (InterruptedException e) {
-				e.printStackTrace(System.out);
-			}
-	    }
+            UserService us = new UserService(con);
+            User candidate = us.getByEmail(email);
+            if(candidate == null || !password.equals(candidate.getPassword())) {
+                System.out.println("Wrong email/password");
+                firstScreen();
+                return;
+            }
 
-
+            currentUser = candidate;
+            if (currentUser.getUserStatusId().equals("3")) { // If is Admin...
+                AdminAndManager aam = new AdminAndManager(con);
+                aam.adminScreen();
+            } else {
+                currentOrder = new Order();
+                currentOrder.setOrder_id(Double.toString(Math.random()* 10001));
+                currentOrder.setUser_id(currentUser.getUserId());
+                currentOrder.setDelivery_status_id("0");
+                //currentOrder.setCard_id();
+                StoreService ss = new StoreService(con);
+                currentStore = ss.getById("0");
+                homeScreen();
+            }
 	}
+        
 	public static void registerScreen(){
 		System.out.println("\n*Register*");
 		System.out.println("Enter email:");
