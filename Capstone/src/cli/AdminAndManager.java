@@ -21,7 +21,7 @@ public class AdminAndManager {
 	}
 	
 	public void adminScreen(){
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		System.out.println("Admin View");
 		options.add("Alter Cards");
 		options.add("Alter Combos");
@@ -37,7 +37,7 @@ public class AdminAndManager {
 		ServiceWrapper.printOptions(options);
 		Scanner sc = new Scanner(System.in);
 	    int input = sc.nextInt();
-	    int option = 0;
+	    int option;
 	    switch(input){
 	    	case 1:
 	    		{
@@ -115,7 +115,7 @@ public class AdminAndManager {
 	
 	public static int optionsScreen(String thing){
 		System.out.println("How would you like to alter " + thing);
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		options.add("Alter");
 		options.add("Add");
 		options.add("Delete");
