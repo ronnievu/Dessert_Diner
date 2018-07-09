@@ -153,7 +153,7 @@ public class Tiger{
 	    String status = sc.next();*/
 	    //, street, city, state, country, zip, status
 	    if(password.equals(passwordConfirm)){
-	    	System.out.println("Registered! Check for email for confirmation");
+	    	System.out.println("Registered! Check your email for confirmation");
                 accountActivationMessage(first,last,email);
 	    	currentUser = sw.register(first, last, phone, email, password);
 			currentOrder = new Order();
