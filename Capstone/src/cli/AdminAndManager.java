@@ -2,20 +2,14 @@ package cli;
 
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 import domain.Card;
 import domain.Menu;
-import domain.Order;
-import domain.Store;
 import domain.User;
 import services.CardService;
 import services.MenuServices;
-import services.OrderService;
-import services.StoreService;
 import services.UserService;
 
 public class AdminAndManager {

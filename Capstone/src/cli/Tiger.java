@@ -62,7 +62,7 @@ public class Tiger{
 	
 	public static void firstScreen(){
 		System.out.println(" __  __ _                     _ _        _____       __     \n|  \\/  (_)                   (_| )      / ____|     / _|    \n| \\  / |_ _ __ ___  _ __ ___  _|/ ___  | |     __ _| |_ ___ \n| |\\/| | | '_ ` _ \\| '_ ` _ \\| | / __| | |    / _` |  _/ _ \\\n| |  | | | | | | | | | | | | | | \\__ \\ | |___| (_| | ||  __/\n|_|  |_|_|_| |_| |_|_| |_| |_|_| |___/  \\_____\\__,_|_| \\___|");
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		options.add("Login");
 		options.add("Register");
 		options.add("Quit");
@@ -73,7 +73,6 @@ public class Tiger{
 		}
 
             int input = sc.nextInt();
-            boolean end = false;
             
                 switch(input){
                     case 1:
@@ -109,6 +108,7 @@ public class Tiger{
 		if(candidate == null){
 			System.out.println("Wrong email");
 			firstScreen();
+                        return;
 		}
 		if(password.equals(candidate.getPassword())){
 			currentUser = candidate;
@@ -127,7 +127,7 @@ public class Tiger{
 				TimeUnit.SECONDS.sleep(1);
 				firstScreen();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				e.printStackTrace(System.out);
 			}
 	    }
 
@@ -186,7 +186,7 @@ public class Tiger{
 	public static void homeScreen(){
     	System.out.println("Welcome " + currentUser.getFirstName());
 		System.out.println("\n*Home*");
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		options.add("Menu");
 		options.add("Order");
 		options.add("Account");
@@ -245,7 +245,6 @@ public class Tiger{
 		System.out.println("\n*Current Order*");
 		System.out.println("Placed: " +currentOrder.getPlaced_timestamp());
 		System.out.println("Delivered: " +currentOrder.getDelivery_timestamp());
-		ServiceWrapper sw = new ServiceWrapper(con);
 		currentOrder.setTotal_price(sw.calculateTotalPrice(currentOrder.getItem_ids()));
 		System.out.println("Total price: $" +currentOrder.getTotal_price());
 		System.out.println("Method: " +currentOrder.getDelivery_method_id());
@@ -290,7 +289,7 @@ public class Tiger{
 	
 	private static void editOrder(Order currentOrder2) {
 		System.out.println("\n*Edit Order*");
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		options.add("Edit Tip");
 		options.add("Edit delivery time");
 		options.add("Edit Instructions");
@@ -378,7 +377,7 @@ public class Tiger{
 	
 	public static void accountScreen(){
 		System.out.println("\n*Account*");
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		options.add("Edit First Name");
 		options.add("Edit Last Name");
 		options.add("Edit Email");
@@ -573,6 +572,7 @@ public class Tiger{
             
             Session session = Session.getDefaultInstance(prop, 
                     new javax.mail.Authenticator() {
+                        @Override
                         protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication("testmummybusiness@gmail.com", "test123@");
                         }
@@ -592,7 +592,7 @@ public class Tiger{
                 System.out.println("Account creation message sent...");
                 
             }catch(MessagingException me){
-                me.printStackTrace();
+                me.printStackTrace(System.out);
             }
         }
         
@@ -609,6 +609,7 @@ public class Tiger{
             
             Session session = Session.getDefaultInstance(prop, 
                     new javax.mail.Authenticator() {
+                        @Override
                         protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication("testmummybusiness@gmail.com", "test123@");
                         }
@@ -654,7 +655,7 @@ public class Tiger{
                 System.out.println("Order receipt creation message sent...");
                 
             }catch(MessagingException me){
-                me.printStackTrace();
+                me.printStackTrace(System.out);
             }
         }
 }
