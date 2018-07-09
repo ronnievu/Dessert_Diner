@@ -114,7 +114,7 @@ public class Tiger{
 		System.out.println("\n*Register*");
 		System.out.println("Enter email:");
 	    String email = sc.next();
-            if (sw.emailTaken(email)) {
+            if (sw.isEmailTaken(email)) {
                 System.out.println("Email taken");
                 System.out.println();
                 firstScreen();
