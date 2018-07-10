@@ -1,6 +1,7 @@
 package cli;
 
 import domain.Card;
+import domain.Location;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import services.MenuServices;
 import services.OrderService;
 import services.StoreService;
 import services.UserService;
+import services.LocationService;
 
 public class Tiger{
 
@@ -48,6 +50,7 @@ public class Tiger{
 	public static User currentUser;
 	public static Order currentOrder;
 	public static Store currentStore;
+        public static Location currentLoc = new Location();
 	
 	static Scanner sc;
 
@@ -428,10 +431,38 @@ public class Tiger{
 	    us.update(currentUser);
 	    accountScreen();
 	}
-	private static void editLocations() {
-		// TODO Auto-generated method stub
-		
-	}
+	
+        public static void editLocations() {
+            LocationService ls = new LocationService(con);
+            currentLoc = ls.getById(currentUser.getUserId());
+            System.out.println("Current Address:\n" + currentLoc.getStreet() + "\n" + currentLoc.getCity() + ", " + currentLoc.getState() + " " + currentLoc.getZip() + "\n" + currentLoc.getCountry());
+            System.out.println("Would you like to edit lcoation? (yes/no)");
+            String option = sc.next().toLowerCase();
+            if (option.equals("yes")) {
+                System.out.println("Enter zip code to see if we deliver to your new location:");
+                String zip = sc.next();
+                if (zip.equals(85054) == true) {
+                    System.out.println("Sorry, we do not deliver to your new address at this time!");
+                    firstScreen();
+                }
+                currentLoc.setZip(zip);
+                sc.nextLine();
+                System.out.println("Enter street:");
+                String street = sc.nextLine();
+                currentLoc.setStreet(street);
+                System.out.println("Enter city:");
+                String city = sc.nextLine();
+                currentLoc.setCity(city);
+                System.out.println("Enter state:");
+                String state = sc.nextLine();
+                currentLoc.setState(state);
+                System.out.println("Enter country:");
+                String country = sc.nextLine();
+                currentLoc.setCountry(country);
+                System.out.println(currentLoc);
+                ls.update(currentLoc);
+            }
+        }
 
 	private static void modifyPaymentMenu() {
             Scanner sc = new Scanner(System.in);
