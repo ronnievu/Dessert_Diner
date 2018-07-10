@@ -311,7 +311,7 @@ public class AdminAndManager {
 		int month = sc.nextInt();
 		
                 
-                System.out.println("Enter expiration date: ");
+                System.out.println("Enter expiration day: ");
 		int day = sc.nextInt();
 		Date expiryDate= new Date(year, month, day);
 		System.out.println("Enter Security code: ");

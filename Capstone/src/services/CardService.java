@@ -105,12 +105,15 @@ public class CardService implements Service<Card>{
 			Date expiryDate = card.getExpiryDate();
 			String securityCode = card.getSecurityCode();
 			
-			CallableStatement oCSF = connection.prepareCall("{?=call sp_update_card(?,?,?,?,?)}");
-			oCSF.setString(2, cardId);
-			oCSF.setString(3, userId);
-			oCSF.setString(4, cardNumber);
-			oCSF.setDate(5, expiryDate);
-			oCSF.setString(6, securityCode);
+			CallableStatement oCSF = connection.prepareCall(
+                                "UPDATE cards " +
+                                "SET user_id = ?, card_number = ?, expiry_date = ?, security_code = ? " + 
+                                "WHERE card_id = ?");
+			oCSF.setString(1, userId);
+			oCSF.setString(2, cardNumber);
+			oCSF.setDate(3, expiryDate);
+			oCSF.setString(4, securityCode);
+                        oCSF.setString(5, cardId);
 			oCSF.execute();
 			oCSF.close();
 		}catch(SQLException e){
