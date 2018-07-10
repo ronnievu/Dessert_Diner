@@ -1,6 +1,7 @@
 package cli;
 
 import domain.Card;
+import domain.Location;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import services.MenuServices;
 import services.OrderService;
 import services.StoreService;
 import services.UserService;
+import services.LocationService;
 
 public class Tiger{
 
@@ -48,6 +50,7 @@ public class Tiger{
 	public static User currentUser;
 	public static Order currentOrder;
 	public static Store currentStore;
+        public static Location currentLoc = new Location();
 	
 	static Scanner sc;
 
@@ -62,7 +65,7 @@ public class Tiger{
 	
 	public static void firstScreen(){
 		System.out.println(" __  __ _                     _ _        _____       __     \n|  \\/  (_)                   (_| )      / ____|     / _|    \n| \\  / |_ _ __ ___  _ __ ___  _|/ ___  | |     __ _| |_ ___ \n| |\\/| | | '_ ` _ \\| '_ ` _ \\| | / __| | |    / _` |  _/ _ \\\n| |  | | | | | | | | | | | | | | \\__ \\ | |___| (_| | ||  __/\n|_|  |_|_|_| |_| |_|_| |_| |_|_| |___/  \\_____\\__,_|_| \\___|");
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		options.add("Login");
 		options.add("Register");
 		options.add("Quit");
@@ -73,7 +76,6 @@ public class Tiger{
 		}
 
             int input = sc.nextInt();
-            boolean end = false;
             
                 switch(input){
                     case 1:
@@ -109,6 +111,7 @@ public class Tiger{
 		if(candidate == null){
 			System.out.println("Wrong email");
 			firstScreen();
+                        return;
 		}
 		if(password.equals(candidate.getPassword())){
 			currentUser = candidate;
@@ -127,7 +130,7 @@ public class Tiger{
 				TimeUnit.SECONDS.sleep(1);
 				firstScreen();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				e.printStackTrace(System.out);
 			}
 	    }
 
@@ -186,7 +189,7 @@ public class Tiger{
 	public static void homeScreen(){
     	System.out.println("Welcome " + currentUser.getFirstName());
 		System.out.println("\n*Home*");
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		options.add("Menu");
 		options.add("Order");
 		options.add("Account");
@@ -245,7 +248,6 @@ public class Tiger{
 		System.out.println("\n*Current Order*");
 		System.out.println("Placed: " +currentOrder.getPlaced_timestamp());
 		System.out.println("Delivered: " +currentOrder.getDelivery_timestamp());
-		ServiceWrapper sw = new ServiceWrapper(con);
 		currentOrder.setTotal_price(sw.calculateTotalPrice(currentOrder.getItem_ids()));
 		System.out.println("Total price: $" +currentOrder.getTotal_price());
 		System.out.println("Method: " +currentOrder.getDelivery_method_id());
@@ -290,7 +292,7 @@ public class Tiger{
 	
 	private static void editOrder(Order currentOrder2) {
 		System.out.println("\n*Edit Order*");
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		options.add("Edit Tip");
 		options.add("Edit delivery time");
 		options.add("Edit Instructions");
@@ -378,7 +380,7 @@ public class Tiger{
 	
 	public static void accountScreen(){
 		System.out.println("\n*Account*");
-		ArrayList<String> options = new ArrayList<String>();
+		ArrayList<String> options = new ArrayList<>();
 		options.add("Edit First Name");
 		options.add("Edit Last Name");
 		options.add("Edit Email");
@@ -429,10 +431,38 @@ public class Tiger{
 	    us.update(currentUser);
 	    accountScreen();
 	}
-	private static void editLocations() {
-		// TODO Auto-generated method stub
-		
-	}
+	
+        public static void editLocations() {
+            LocationService ls = new LocationService(con);
+            currentLoc = ls.getById(currentUser.getUserId());
+            System.out.println("Current Address:\n" + currentLoc.getStreet() + "\n" + currentLoc.getCity() + ", " + currentLoc.getState() + " " + currentLoc.getZip() + "\n" + currentLoc.getCountry());
+            System.out.println("Would you like to edit lcoation? (yes/no)");
+            String option = sc.next().toLowerCase();
+            if (option.equals("yes")) {
+                System.out.println("Enter zip code to see if we deliver to your new location:");
+                String zip = sc.next();
+                if (zip.equals(85054) == true) {
+                    System.out.println("Sorry, we do not deliver to your new address at this time!");
+                    firstScreen();
+                }
+                currentLoc.setZip(zip);
+                sc.nextLine();
+                System.out.println("Enter street:");
+                String street = sc.nextLine();
+                currentLoc.setStreet(street);
+                System.out.println("Enter city:");
+                String city = sc.nextLine();
+                currentLoc.setCity(city);
+                System.out.println("Enter state:");
+                String state = sc.nextLine();
+                currentLoc.setState(state);
+                System.out.println("Enter country:");
+                String country = sc.nextLine();
+                currentLoc.setCountry(country);
+                System.out.println(currentLoc);
+                ls.update(currentLoc);
+            }
+        }
 
 	private static void modifyPaymentMenu() {
             Scanner sc = new Scanner(System.in);
@@ -573,6 +603,7 @@ public class Tiger{
             
             Session session = Session.getDefaultInstance(prop, 
                     new javax.mail.Authenticator() {
+                        @Override
                         protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication("testmummybusiness@gmail.com", "test123@");
                         }
@@ -592,7 +623,7 @@ public class Tiger{
                 System.out.println("Account creation message sent...");
                 
             }catch(MessagingException me){
-                me.printStackTrace();
+                me.printStackTrace(System.out);
             }
         }
         
@@ -609,6 +640,7 @@ public class Tiger{
             
             Session session = Session.getDefaultInstance(prop, 
                     new javax.mail.Authenticator() {
+                        @Override
                         protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication("testmummybusiness@gmail.com", "test123@");
                         }
@@ -654,7 +686,7 @@ public class Tiger{
                 System.out.println("Order receipt creation message sent...");
                 
             }catch(MessagingException me){
-                me.printStackTrace();
+                me.printStackTrace(System.out);
             }
         }
 }

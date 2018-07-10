@@ -27,8 +27,7 @@ import services.UserService;
 public class ServiceWrapper {
 	
 	Connection con;
-	
-	
+	Location loc;
 	
 	public ServiceWrapper(Connection con) {
 		super();
@@ -62,7 +61,11 @@ public class ServiceWrapper {
 		result =  us.add(user);
 		return user;
 	}
-
+        
+        public Location getloc(){
+            return loc;
+        }
+        
 	public static void printOptions(ArrayList<String> options){
 		options.add("Go back");
 		int count = 0;
