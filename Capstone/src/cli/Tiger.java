@@ -56,7 +56,7 @@ public class Tiger{
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
                 Class.forName("oracle.jdbc.OracleDriver");
-                con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "db_uSpring", "pass");
+                con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "pass", "pass");
                 sw  = new ServiceWrapper(con);
                 sc = new Scanner(System.in);
                 firstScreen();
@@ -64,7 +64,7 @@ public class Tiger{
 	}
 	
 	public static void firstScreen(){
-		System.out.println(" __  __ _                     _ _        _____       __     \n|  \\/  (_)                   (_| )      / ____|     / _|    \n| \\  / |_ _ __ ___  _ __ ___  _|/ ___  | |     __ _| |_ ___ \n| |\\/| | | '_ ` _ \\| '_ ` _ \\| | / __| | |    / _` |  _/ _ \\\n| |  | | | | | | | | | | | | | | \\__ \\ | |___| (_| | ||  __/\n|_|  |_|_|_| |_| |_|_| |_| |_|_| |___/  \\_____\\__,_|_| \\___|");
+		System.out.println("______                    _ \n|  _  \\                  | | \n| | | |___  ___  ___ _ __| |_\n| | | / _ \\/ __|/ _ \\ '__| __|\n| |/ /  __/\\__ \\  __/ |  | |_\n|___/ \\___||___/\\___|_|   \\__|\n______ _\n|  _  (_)\n| | | |_ _ __   ___ _ __\n| | | | | '_ \\ / _ \\ '__|\n| |/ /| | | | |  __/ |  \n|___/ |_|_| |_|\\___|_|  \n");
 		ArrayList<String> options = new ArrayList<>();
 		options.add("Login");
 		options.add("Register");
@@ -459,7 +459,6 @@ public class Tiger{
                 System.out.println("Enter country:");
                 String country = sc.nextLine();
                 currentLoc.setCountry(country);
-                System.out.println(currentLoc);
                 ls.update(currentLoc);
             }
         }
