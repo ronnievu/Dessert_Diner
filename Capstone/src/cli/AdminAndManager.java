@@ -3,13 +3,17 @@ package cli;
 import static cli.Tiger.firstScreen;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 
 import domain.Card;
 import domain.Location;
 import domain.Menu;
+import domain.Order;
+import domain.Store;
 import domain.User;
 import domain.UserStatus;
 import java.sql.CallableStatement;
@@ -21,6 +25,8 @@ import services.DeliveryStatus;
 import services.DeliveryStatusService;
 import services.LocationService;
 import services.MenuServices;
+import services.OrderService;
+import services.StoreService;
 import services.UserService;
 import services.UserStatusService;
 
@@ -38,7 +44,7 @@ public class AdminAndManager {
 		ArrayList<String> options = new ArrayList<String>();
 		System.out.println("Admin View");
 		options.add("Alter Cards");
-		options.add("Alter Combos");
+		//options.add("Alter Combos");
 		options.add("Alter Delivery Methods");
 		options.add("Alter Delivery Statuses");
 		options.add("Alter Items");
@@ -58,7 +64,7 @@ public class AdminAndManager {
 	    			option = optionsScreen("Card");
 	    			switch(option){
 	    				case 1:
-	    					alterCardScreen(); //bug
+	    					alterCardScreen(); //aria fixed-works
 	    				case 2:
 	    					addCardScreen(); //works
 	    				case 3:
@@ -68,7 +74,7 @@ public class AdminAndManager {
 	    			}
 	    			break;
 	    		}
-	    	case 3:
+	    	case 2:
 	    		option = optionsScreen("Delivery Method");
                         switch(option){
                         case 1:
@@ -84,11 +90,11 @@ public class AdminAndManager {
                         }
                             
                         
-	    	case 4:
+	    	case 3:
 	    		option = optionsScreen("Delivery Status");
                         switch(option){
                             case 1:
-                                   alterDeliveryStatus(); //goes to alter item Screen - bug
+                                   alterDeliveryStatus(); //works
                                    break;
                             case 2: 
                                    addDeliveryStatus(); //works
@@ -103,7 +109,7 @@ public class AdminAndManager {
                         
                         
                         
-	    	case 5:
+	    	case 4:
 	    	{
 	    		option = optionsScreen("Item");
     			switch(option){
@@ -121,7 +127,9 @@ public class AdminAndManager {
     			}
     			break;
 	    	}
-	    	case 6: //THERE IS NO "ItemTypesService" class OR "ItemTypes" CLASS 
+	    	case 5: {
+              
+              //THERE IS NO "ItemTypesService" class OR "ItemTypes" CLASS 
 	    		option = optionsScreen("Item Type");
                         switch(option){
     				case 1:
@@ -137,8 +145,9 @@ public class AdminAndManager {
                                 case 4:
     					adminScreen();
                         }
-                               
-	    	case 7:
+                         break;
+                }
+	    	case 6:{
 	    		option = optionsScreen("Location");
                         switch(option){
                             case 1:
@@ -153,17 +162,16 @@ public class AdminAndManager {
                             case 4:
                                     adminScreen();
                         }
-                        
-	    	case 8: //loops through to the next case
-                         //for example when choose case 2 to add 
-                         //outputs "how would you like to alter order items"
-	    		optionsScreen("Order");
+                        break;
+                }
+	    	case 7: {
+	    		option = optionsScreen("Order");
                         switch(option){
                             case 1:
                                    alterOrderScreen();
                                    break;
                             case 2:
-                                   addOrderScreen();
+                                   addOrderScreen(); //bug
                                    break;
                             case 3:
                                    deleteOrderScreen();
@@ -173,14 +181,15 @@ public class AdminAndManager {
                                 
                         }
                         
+                        break;
+                }
                         
-                        
-                        
-	    	case 9: //loops through to next case 
-                        //"how would you like to alter User"
-                        //also is this neccessary??
-	    		optionsScreen("Order Item");
-	    	case 10:
+	    	case 8: {
+                    //not finished
+                    option  =	optionsScreen("Order Item");
+                }
+                break;
+	    	case 9:
 	    	{
 	    		option = optionsScreen("User");
 	    		switch(option){
@@ -192,9 +201,9 @@ public class AdminAndManager {
 	    			case 3:
 	    				deleteUserScreen(); //works
 	    		}
-	    			
+	    	break;		
 	    	}
-	    	case 11:
+	    	case 10:{
 	    		option = optionsScreen("User Statuse");
                         switch(option){
                             case 1:
@@ -209,15 +218,17 @@ public class AdminAndManager {
                             case 4:
                                 adminScreen();
                         }
-                        
-	    	case 12:
+                        break;
+                }  
+	    	case 11: {
                         firstScreen(); //works 
-                        
-	    	case 13:
+                }
+                break;
+	    	case 12:
 	    		System.exit(0);
 	    }
 	    
-	    adminScreen();
+	 //   adminScreen();
 	    
 	}
 	
@@ -305,7 +316,7 @@ public class AdminAndManager {
 		int month = sc.nextInt();
 		
                 
-                System.out.println("Enter expiration day: ");
+                System.out.println("Enter expiration date: ");
 		int day = sc.nextInt();
 		Date expiryDate= new Date(year, month, day);
 		System.out.println("Enter Security code: ");
@@ -721,6 +732,10 @@ public class AdminAndManager {
              Scanner sc = new Scanner(System.in);
              System.out.println("\n Enter Location id: ");
              String locationId = sc.next();
+             System.out.println("\nEnter user id: ");
+             String userID = sc.next();
+             System.out.println("\n Enter taxt rate: ");
+             double taxrate = sc.nextDouble();
              System.out.println("\nEnter street: ");
              String street = sc.next();
              System.out.println("\nEnter city: ");
@@ -732,7 +747,7 @@ public class AdminAndManager {
              System.out.println("\nEnter zip code: ");
              String zip = sc.next();
              
-             Location nl = new Location(locationId,street,city,country,state,zip);
+             Location nl = new Location(locationId,userID,taxrate,street,city,country,state,zip);
              LocationService lss = new LocationService(con);
              lss.add(nl);
              
@@ -872,6 +887,7 @@ public class AdminAndManager {
              String store_id = sc.next();
              System.out.println("\n Enter the new delivery status id");
              String delivery_status_id = sc.next();
+             
              Order ord = new Order(order_id,user_id,tip,total_price,placed_stamp,delivery_stamp,card_id,instructions,delivery_method,store_id,delivery_status_id);
              OrderService os = new OrderService(con);
               os.update(ord);
@@ -888,7 +904,7 @@ public class AdminAndManager {
          
          
          public static void addOrderScreen(){
-             
+          
              System.out.println("Add an order");
              Scanner sc = new Scanner(System.in);
 	     System.out.println("\nEnter Order id: ");

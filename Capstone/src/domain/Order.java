@@ -50,6 +50,10 @@ public class Order {
 		this.store_id = "0";
 		this.delivery_status_id = "0";
 	}
+
+    public Order(String order_id, String user_id, float tip, float total_price, int placed_stamp, int delivery_stamp, String card_id, String instructions, String delivery_method, String store_id, String delivery_status_id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 	
 	public ArrayList<String> getItem_ids() {
 		return item_ids;
