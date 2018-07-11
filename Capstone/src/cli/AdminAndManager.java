@@ -154,7 +154,7 @@ public class AdminAndManager {
                                     alterLocationScreen(); //bug 
                                     break;
                             case 2:
-                                    addLocationScreen(); //returns invalid index column? bug
+                                    addLocationScreen(); //works
                                     break;
                             case 3: 
                                     deleteLocationScreen(); //works
@@ -168,13 +168,13 @@ public class AdminAndManager {
 	    		option = optionsScreen("Order");
                         switch(option){
                             case 1:
-                                   alterOrderScreen();
+                                   alterOrderScreen(); //works
                                    break;
                             case 2:
                                    addOrderScreen(); //bug
                                    break;
                             case 3:
-                                   deleteOrderScreen();
+                                   deleteOrderScreen(); //works
                                    break;
                             case 4:
                                    adminScreen();
@@ -187,6 +187,17 @@ public class AdminAndManager {
 	    	case 8: {
                     //not finished
                     option  =	optionsScreen("Order Item");
+                    switch(option){
+                        case 1:
+                                alterOrderItemScreen();
+                                break;
+                        case 2:
+                                addOrderItemScreen();
+                                break;
+                        case 3:
+                                deleteOrderItemScreen();
+                                
+                    }
                 }
                 break;
 	    	case 9:
@@ -207,7 +218,7 @@ public class AdminAndManager {
 	    		option = optionsScreen("User Statuse");
                         switch(option){
                             case 1:
-                                    alterUserStatusScreen(); //goes to home screen?
+                                    alterUserStatusScreen(); //index out of bound error
                                     break;
                             case 2:
                                     addUserStatusScreen(); //wont store - bug
@@ -720,9 +731,65 @@ public class AdminAndManager {
         
         public static void deleteItemTypeScreen(){
             
+              System.out.println("List of Items");
+             MenuServices ls = new MenuServices(con);
+             ArrayList<Menu> ll = ls.getAll();
+             int count=1;
+             for(Menu l:ll){
+                 System.out.println(count + ": "+ l.getId());
+                 count++;
+             }
+             System.out.println("Select the Menu id item youd like to delete");
+             Scanner sc = new Scanner(System.in);
+             int input = sc.nextInt();
+             ls.deleteById(ll.get(input-1).getId());
+             System.out.println("Deleted item");
+            
+            
+            
         }
          
          public static void alterLocationScreen(){
+             
+              System.out.println("List of Locations");
+                LocationService ms = new LocationService(con);
+		ArrayList<Location> dm = ms.getAll();
+	
+		int count=1;
+		for(Location c:dm){
+			System.out.println(count + ": " + c.getLocationId());
+			count++;
+		}
+		System.out.println("Enter the id of the Location you would like to alter");
+		Scanner sc = new Scanner(System.in);
+	       int input = sc.nextInt();
+	    
+	    String locationId= dm.get(input-1).getLocationId();
+             System.out.println("\n Enter new Location id: ");
+             String nlocationId = sc.next();
+             System.out.println("\nEnter new user id: ");
+             String userID = sc.next();
+             System.out.println("\n Enter new taxt rate: ");
+             double taxrate = sc.nextDouble();
+             System.out.println("\nEnter new street: ");
+             String street = sc.next();
+             System.out.println("\nEnter new city: ");
+             String city = sc.next();
+             System.out.println("\nEnter new country: ");
+             String country = sc.next();
+             System.out.println("\nEnter new state: ");
+             String state = sc.next();
+             System.out.println("\nEnter new zip code: ");
+             String zip = sc.next();
+             
+             Location nl = new Location(nlocationId,userID,taxrate,street,city,country,state,zip);
+             LocationService lss = new LocationService(con);
+             lss.update(nl);
+	    
+	     
+             
+             
+             
              
          }
          
@@ -819,8 +886,9 @@ public class AdminAndManager {
              System.out.println("\nEnter a new user status: ");
              String userStatus = sc.next();
              
-   //          UserStatus uss = new UserStatus(userStatusId,userStatus);
-             
+      //    UserStatus uss = new UserStatus(userStatusId,userStatus);
+        //  UserStatusService ss = new UserStatusService(con);
+      //    ss.add(uss);
              
              
            
@@ -955,11 +1023,46 @@ public class AdminAndManager {
              Scanner sc = new Scanner(System.in);
              int input = sc.nextInt();
              ls.deleteById(ll.get(input-1).getOrder_id());
-             System.out.println("Delete location");
+             System.out.println("Delete Order!");
              
              
              
          }
+         
+         
+         public void alterOrderItemScreen(){
+           //necessary?  
+         }
+         
+         public void addOrderItemScreen(){
+             Scanner sc = new Scanner(System.in);
+             System.out.println("Enter the order id youd like to add and item to");
+             String order_id = sc.next();
+             System.out.println("Enter the item id youd like to add");
+             String item_id = sc.next();
+             OrderService os = new OrderService(con);
+             os.addItem_id(item_id, order_id);
+         }
+         
+         public void deleteOrderItemScreen(){
+             
+             System.out.println("List of Orders");
+             OrderService ls = new OrderService(con);
+             ArrayList<Order> ll = ls.getAll();
+             int count=1;
+             for(Order l:ll){
+                 System.out.println(count + ": "+ l.getOrder_id());
+                 count++;
+             }
+             System.out.println("Select the order youd like to delete");
+             Scanner sc = new Scanner(System.in);
+             int input = sc.nextInt();
+             ls.deleteById(ll.get(input-1).getOrder_id());
+             System.out.println("Delete Order!");
+             
+             
+         }
+         
          
          
          
