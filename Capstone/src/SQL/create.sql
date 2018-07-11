@@ -94,3 +94,11 @@ create table order_items(
 	order_id varchar(4000) references orders(order_id),
 	item_id varchar(4000) references items(item_id) 
 );
+
+create table reviews(
+    item_id varchar(2000) references items(item_id),
+    user_id varchar(2000) references users(user_id),
+    rating decimal(1,2),
+    review varchar(4000),
+    primary key(item_id, user_id)
+);
