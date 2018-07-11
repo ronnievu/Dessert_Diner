@@ -171,6 +171,7 @@ public class Tiger{
 	    //, street, city, state, country, zip, status
 	    if(password.equals(passwordConfirm)){
 	    	System.out.println("Registered! Check your email for confirmation");
+                firstScreen();
                 accountActivationMessage(first,last,email);
 	    	currentUser = sw.register(first, last, phone, email, password);
 			currentOrder = new Order();
@@ -271,6 +272,7 @@ public class Tiger{
 
                 ArrayList<String> itemIds = currentOrder.getItem_ids();
 		ArrayList<Menu> items = sw.getMenuItems(itemIds);
+                homeScreen();
 		if(items.isEmpty()){
                     System.out.println("No items in cart!");
                     currentOrderScreen();
