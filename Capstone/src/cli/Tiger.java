@@ -95,6 +95,8 @@ public class Tiger{
                             aam.adminScreen();
                             
                             break;
+                    default:
+                            firstScreen();
                 }
             
 	}
@@ -225,9 +227,10 @@ public class Tiger{
 		ServiceWrapper.printMenuItems(menus);
 	    int input = sc.nextInt();
 	    if(input==menus.size()+1) homeScreen();
+            else if(input > menus.size()+1 || input < 1) menuScreen();
 	    else menuItemScreen(menus.get(input-1));
 	}
-	public static void menuItemScreen(Menu menu){
+	public static void menuItemScreen(Menu menu) {
 		System.out.println("\n*" + menu.getName() + "*");
 		System.out.println(menu.getDescription());
 		System.out.println("$" + menu.getPrice());
@@ -236,6 +239,7 @@ public class Tiger{
 	    int input = sc.nextInt();
 	    if(input==1) itemQuantityScreen(menu);
 	    else if(input==2) menuScreen();
+            else menuItemScreen(menu);
 	}
 	//TODO finish this
 	public static void itemQuantityScreen(Menu menu){
@@ -290,6 +294,7 @@ public class Tiger{
 
             }
 	    else if(input==5) homeScreen();
+            else currentOrderScreen();
 	}
 	
 	private static void editOrder(Order currentOrder2) {
@@ -312,28 +317,32 @@ public class Tiger{
     			currentOrder.setTip(newTip);
     			System.out.println("Tip Changed to: $" + newTip);
     		}
-    		if(input==2){
+                else if(input==2){
     			int newDelivery_timestamp = Integer.parseInt(editString());
     			currentOrder.setDelivery_timestamp(newDelivery_timestamp);
     			System.out.println("Delivery Time Changed to: " + newDelivery_timestamp);
     		}
-    		if(input==3){
+                else if(input==3){
     			String newInstructions = editString();
     			currentOrder.setInstuctions(newInstructions);
     			System.out.println("Instructions Changed to: " + newInstructions);
     		}
-    		if(input==4){
+                else if(input==4){
     			String newDelivery_method = editString();
     			currentOrder.setDelivery_method_id(newDelivery_method);
     			System.out.println("Delivery Method Changed to: " + newDelivery_method);
     		}
-    		if(input==5){
+                else if(input==5){
     			String newStore = editString();
     			currentOrder.setStore_id(newStore);
     			System.out.println("Delivery Method Changed to: " + newStore);
     		}
 
-    		if(input==6) homeScreen();
+                else if(input==6) homeScreen();
+                else {
+                    editOrder(currentOrder2);
+                    return;
+                }
 	    
 	    currentOrderScreen();
 		
@@ -347,8 +356,8 @@ public class Tiger{
 		if(items.isEmpty()) System.out.println("No items");
 		ServiceWrapper.printMenuItems(items);
 	    int input = sc.nextInt();
-	    if(input==items.size()) homeScreen();
-	    else if(input==items.size()+1) currentOrderScreen();
+	    if(input==items.size()+1) currentOrderScreen();
+            else if(input > items.size()+1 || input < 1) viewEditOrderItems(order);
 	    else orderItemScreen(items.get(input));
 	}
 	public static void orderItemScreen(Menu menu){
@@ -403,31 +412,35 @@ public class Tiger{
     			currentUser.setFirstName(newFirstName);
     			System.out.println("First Name Changed to: " + newFirstName);
     		}
-    		if(input==2){
+                else if(input==2){
     			String newLastName = editString();
     			currentUser.setLastName(newLastName);
     			System.out.println("Last Name Changed to: " + newLastName);
     		}
-    		if(input==3){
+                else if(input==3){
     			String newEmail = editString();
     			currentUser.setEmail(newEmail);
     			System.out.println("Email Changed to: " + newEmail);
     		}
-    		if(input==4){
+                else if(input==4){
     			String newPassword = editString();
     			currentUser.setPassword(newPassword);
     			System.out.println("Password Changed to: " + newPassword);
     		}
-    		if(input==5){
+                else if(input==5){
 
     			String newPhoneNumber = editString();
     			currentUser.setPhone(newPhoneNumber);
     			System.out.println("Phone Number Changed to: " + newPhoneNumber);
     		}
-    		if(input==6) modifyPaymentMenu();
-    		if(input==7) editLocations();
-    		if(input==8) allOrdersScreen();
-    		if(input==9) homeScreen();
+                else if(input==6) modifyPaymentMenu();
+                else if(input==7) editLocations();
+                else if(input==8) allOrdersScreen();
+                else if(input==9) homeScreen();
+                else {
+                    accountScreen();
+                    return;
+                }
 	    
 	    UserService us = new UserService(con);
 	    us.update(currentUser);
