@@ -96,4 +96,8 @@ public class Location {
     public String toString() {
         return "Location{" + "locationId=" + locationId + ", street=" + street + ", city=" + city + ", country=" + country + ", state=" + state + ", zip=" + zip + ", userId=" + userId + ", taxRate=" + taxRate + '}';
     }	
+
+    public double getTaxrate() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
