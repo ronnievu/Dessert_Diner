@@ -284,7 +284,6 @@ public class Tiger{
 	    if(input==2) viewEditOrderItems(currentOrder);
 	    if(input==3) editOrder(currentOrder);
 	    if(input==4 && confirm()) {
-
                 ArrayList<String> itemIds = currentOrder.getItem_ids();
 		ArrayList<Menu> items = sw.getMenuItems(itemIds);
 		if(items.isEmpty()){
@@ -292,6 +291,26 @@ public class Tiger{
                     currentOrderScreen();
                 }
                 else{
+                    Scanner sc = new Scanner(System.in);
+                    CardService cs = new CardService(con);
+                    ArrayList<Card> allCards = cs.getUserCards(currentUser.getUserId());
+                    Card cardToPayWith;
+                    if(allCards.isEmpty()) {
+                        addCreditCardMenu();
+                        allCards = cs.getUserCards(currentUser.getUserId());
+                        cardToPayWith = allCards.get(0);
+                    } else {
+                        System.out.println();
+                        int i = 1;
+                        for (Card c : allCards) {
+                            System.out.println(i + ". " + c.getCardNumber());
+                            i++;
+                        }
+                        
+                        System.out.println("Pick a credit card from the list to pay with: ");
+                        cardToPayWith = allCards.get(sc.nextInt() - 1);
+                    }
+                    currentOrder.setCard_id(cardToPayWith.getCardId());
                     sw.submitOrder(currentOrder);
                     orderConfirmationMessage(currentUser.getFirstName(), currentUser.getLastName(), currentUser.getEmail(), currentOrder);
                 
@@ -346,9 +365,9 @@ public class Tiger{
     			String newStore = editString();
     			currentOrder.setStore_id(newStore);
     			System.out.println("Delivery Method Changed to: " + newStore);
-    		}
-
-                else if(input==6) homeScreen();
+    		} else if(input== 6) {
+                        homeScreen();
+                }
                 else {
                     editOrder(currentOrder2);
                     return;
@@ -506,8 +525,11 @@ public class Tiger{
                 case 1:
                     addCreditCardMenu();
                     break;
-                default:
+                case 2:
                     accountScreen();
+                    break;
+                default:
+                    modifyPaymentMenu();
                     break;
                 }
             } else {
@@ -530,6 +552,9 @@ public class Tiger{
                     break;
                 case 3:
                     accountScreen();
+                    break;
+                default:
+                    modifyPaymentMenu();
                     break;
                 }
             }
