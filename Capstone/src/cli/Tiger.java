@@ -175,14 +175,13 @@ public class Tiger{
 	    //, street, city, state, country, zip, status
 	    if(password.equals(passwordConfirm)){
 	    	System.out.println("Registered! Check your email for confirmation");
-                firstScreen();
                 accountActivationMessage(first,last,email);
 	    	currentUser = sw.register(first, last, phone, email, password);
 			currentOrder = new Order();
 			currentOrder.setOrder_id(Double.toString(Math.random()* 10001));
 			currentOrder.setUser_id(currentUser.getUserId());
 			currentOrder.setDelivery_status_id("0");
-	    	homeScreen();
+                firstScreen();
 	    }else{
 	    	System.out.println("Mismatching passwords, try again");
 	    	firstScreen();
@@ -288,7 +287,6 @@ public class Tiger{
 
                 ArrayList<String> itemIds = currentOrder.getItem_ids();
 		ArrayList<Menu> items = sw.getMenuItems(itemIds);
-                homeScreen();
 		if(items.isEmpty()){
                     System.out.println("No items in cart!");
                     currentOrderScreen();
@@ -654,7 +652,7 @@ public class Tiger{
                 message.setFrom(new InternetAddress(from));
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
                 message.setSubject("Thank you for creating you account!");
-                message.setText("Hello" + firstName + " " + lastName + ", \n\n " +
+                message.setText("Hello " + firstName + " " + lastName + ", \n\n " +
                         "First off I want to welcome you to the Mummy family. You can check out " + 
                         "our specials and menu options on your homepage. We hope you enjoy our food " +
                         "you leave with a food coma. So enjoy your access to our food. \n\n" + 
