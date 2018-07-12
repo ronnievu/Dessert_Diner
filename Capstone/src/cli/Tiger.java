@@ -18,6 +18,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Locale;
 import services.CardService;
@@ -204,20 +206,30 @@ public class Tiger{
 			count++;
 			System.out.println(count + ". " + option);
 		}
-                boolean end = false;
                 
-                while(end == false){
-                    int input = sc.nextInt();
-                    if(input==1) menuScreen();
-                    if(input==2) currentOrderScreen();    	
-                    if(input==3) accountScreen();
-                    if(input==4) storeDetailsScreen();   	
-                    if(input==5) firstScreen();
-                    if(input==6) {
-                            System.out.println("Goodbye");
-                            end = true;
-                    }
-                }
+                int input = sc.nextInt();
+                switch (input) {
+                    case 1:
+                        menuScreen();
+                        break;
+                    case 2:
+                        currentOrderScreen();
+                        break;
+                    case 3:
+                        accountScreen();
+                        break;
+                    case 4:
+                        storeDetailsScreen();
+                        break;
+                    case 5:
+                        firstScreen();
+                        break;
+                    case 6:
+                        System.out.println("Goodbye");
+                        System.exit(0);
+                    default:
+                        homeScreen();
+                }   
 	}
 	
 	public static void menuScreen(){
@@ -484,6 +496,7 @@ public class Tiger{
             
             CardService cardService = new CardService(con); 
             ArrayList<Card> allCards = cardService.getUserCards(currentUser.getUserId());
+            
             if (allCards.isEmpty()) {
                 System.out.println();
                 System.out.println("You have no credit cards.");
@@ -527,21 +540,31 @@ public class Tiger{
 	}
         
         private static void addCreditCardMenu() {
-            Scanner sc = new Scanner(System.in);
-            
-            System.out.println();
-            System.out.println("Enter your card number: ");
-            String cardNumber = sc.nextLine();
-            
-            System.out.println("Enter your security code: ");
-            String securityCode = sc.nextLine();
-            
-            System.out.println("Enter your expiry date (mm/dd/yyyy): ");
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            formatter = formatter.withLocale(Locale.US);
-            Date expiryDate = Date.valueOf(LocalDate.parse(sc.nextLine(), formatter));
-            
-            sw.addCreditCard(currentUser.getUserId(), cardNumber, securityCode, expiryDate);
+            boolean inputIsValid;
+            do {
+                try {
+                    Scanner sc = new Scanner(System.in);
+                    
+                    System.out.println();
+                    System.out.println("Enter your card number (12 digits): ");
+                    String cardNumber = String.valueOf(sc.next("[0-9]{12}"));
+                    
+                    System.out.println("Enter your security code (3 digits): ");
+                    String securityCode = String.valueOf(sc.next("[0-9]{3}"));
+                    
+                    System.out.println("Enter your expiry date (mm/dd/yyyy): ");
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                    formatter = formatter.withLocale(Locale.US);
+                    Date expiryDate = Date.valueOf(LocalDate.parse(sc.next(), formatter));
+                    
+                    inputIsValid = true;
+                    sw.addCreditCard(currentUser.getUserId(), cardNumber, securityCode, expiryDate);
+                } catch (InputMismatchException | DateTimeParseException e) {
+                    System.out.println();
+                    System.out.println("Invalid input. Reenter card details.");
+                    inputIsValid = false;
+                }
+            } while(!inputIsValid);
         }
         
         private static void deleteCreditCardMenu(List<Card> allCards) {
@@ -549,7 +572,10 @@ public class Tiger{
             
             System.out.println();
             System.out.println("Select which card you want to delete (Use the list #):");
-            int choice = sc.nextInt()-1;
+            int choice;
+            do {
+                choice = sc.nextInt()-1;
+            } while (choice < 0 || choice >= allCards.size());
             Card cardToDelete = allCards.get(choice);
             
             CardService cardService = new CardService(con);
