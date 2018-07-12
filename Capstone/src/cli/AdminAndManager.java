@@ -767,40 +767,29 @@ public class AdminAndManager {
          }
          
          
-         public static void alterUserStatusScreen(){
-             
-              System.out.println("List of User Statuses");
-               UserStatusService ms = new UserStatusService(con);
-		ArrayList<UserStatus> dm = ms.getAll();
-	
-		int count=1;
-		for(UserStatus c:dm){
-			System.out.println(count + ": " + c.getUserStatusId());
-			count++;
-		}
-		System.out.println("Enter the id of the Order you would like to alter");
-		Scanner sc = new Scanner(System.in);
-	    int input = sc.nextInt();
-	    
-	    String userStatusId= dm.get(input-1).getUserStatusId();
-	  
-             System.out.println("\nEnter a new user status Id: ");
-         //    String userStatusId = sc.next();
-             System.out.println("\nEnter a new user status: ");
-             String userStatus = sc.next();
-	    
-	     
-            
-             System.out.println("user updated!");
-                AdminAndManager aam = new AdminAndManager(con);
-		aam.adminScreen();
-             
-             
-             
-             
-             
-             
-         }
+    public static void alterUserStatusScreen() {
+        Scanner sc = new Scanner(System.in);
+        UserStatusService ms = new UserStatusService(con);
+        
+        System.out.println("List of User Statuses");
+        ArrayList<UserStatus> dm = ms.getAll();
+        int count = 1;
+        for (UserStatus c : dm) {
+            System.out.println(count + ": " + c.getUserStatusId());
+            count++;
+        }
+        
+        System.out.println("Enter the id of the user you would like to alter");
+        String userStatusId = dm.get(sc.nextInt() - 1).getUserStatusId();
+        System.out.println("\nEnter a new user status: ");
+        String userStatusName = sc.next();
+        UserStatus userStatus = new UserStatus(userStatusId, userStatusName);
+        
+        ms.update(userStatus);
+        System.out.println("user updated!");
+        AdminAndManager aam = new AdminAndManager(con);
+        aam.adminScreen();
+    }
          
          public static void addUserStatusScreen(){
              System.out.println("Add a User Status");

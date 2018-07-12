@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import domain.UserStatus;
+import java.sql.PreparedStatement;
 
 public class UserStatusService implements Service<UserStatus>{
 
@@ -88,11 +89,11 @@ public class UserStatusService implements Service<UserStatus>{
 			String userStatusId = userStatus.getUserStatusId();
 			String userStatusName = userStatus.getUserStatus();
 			
-			CallableStatement oCSF = connection.prepareCall("{?=call sp_update_user_status(?,?)}");
-			oCSF.setString(2,userStatusId);
-			oCSF.setString(3, userStatusName);
-			oCSF.execute();
-			oCSF.close();
+			PreparedStatement stmt = connection.prepareStatement("UPDATE user_statuses SET user_status=? WHERE user_status_id=?");
+			stmt.setString(1, userStatusName);
+			stmt.setString(2, userStatusId);
+			stmt.execute();
+			stmt.close();
 		}catch(SQLException e){
 			System.out.println(e.getMessage());
 		}	
